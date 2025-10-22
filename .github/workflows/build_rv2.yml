@@ -1,0 +1,17 @@
+name: Build RV2
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build Orange Pi RV2
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        cp orangepi_rv2_defconfig .config
+        make defconfig
+        make -j$(nproc) download
+        make -j$(($(nproc)+1))

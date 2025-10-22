@@ -52,7 +52,7 @@ make4.1+ perl python3.7+ rsync subversion unzip which
 # Clone and setup
 
 ```
-git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -B 24.10
+git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 24.10
 cd OpenWRT-OrangePi_Rv2
 
 ```

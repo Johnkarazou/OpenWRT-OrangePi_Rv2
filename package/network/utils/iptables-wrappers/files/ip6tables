@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/sbin/xtables-nft-multi main6 "$@"

@@ -86,13 +86,10 @@ make -j $(($(nproc)+1))
 - **Kernel Partition Size:** 128MB
 - **Root Filesystem Partition Size:** 2048MB
 
-### Firewall Changes
-- **Disabled:** firewall4
-- **Enabled:** firewall (iptables)
-
 ### Package Selection
 
 **System & Monitoring**
+- dnsmasq-full
 - zram-swap
 - btop
 - htop

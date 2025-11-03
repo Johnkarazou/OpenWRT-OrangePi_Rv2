@@ -43,12 +43,12 @@ the [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/i
 documentation.
 
 ```
-asciidoc bash binutils bzip2 flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
+asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
 ```
 Copy-paste command below.
 I use Debian 13:
 ```
-sudo apt install -y asciidoc bash binutils bzip2 flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
+sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
 ```
 ### Quickstart
 

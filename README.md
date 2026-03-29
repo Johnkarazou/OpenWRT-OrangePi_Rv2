@@ -55,7 +55,7 @@ sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time uti
 # Clone and setup
 
 ```
-git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 24.10
+git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 25.12
 cd OpenWRT-OrangePi_Rv2
 
 ```

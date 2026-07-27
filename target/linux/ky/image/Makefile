@@ -26,22 +26,19 @@ define Build/boot-script
 	mkimage -A riscv -O linux -T script -C none -a 0 -e 0 -d $(if $(1),$(1),default).bootscript $@.boot/boot.scr
 endef
 
-define Build/pine64-img
+define Build/ky-sd-img
 	# Creates the final SD/eMMC images, 
 	# combining boot partition, root partition as well as the u-boot bootloader
 
-	# Generate a new partition table in $@ with 32 MiB of 
-	# alignment padding for the u-boot-rockchip.bin (idbloader + u-boot) to fit:
-	# http://opensource.rock-chips.com/wiki_Boot_option#Boot_flow
-	#
-	# U-Boot SPL expects the U-Boot ITB to be located at sector 0x4000 (8 MiB) on the MMC storage
+	# Generate a new partition table in $@ with 16 MiB (32768 sectors) of 
+	# alignment padding for the bootloader components to fit.
 	PADDING=1 $(SCRIPT_DIR)/gen_image_generic.sh \
 		$@ \
 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $@.boot \
 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(IMAGE_ROOTFS) \
 		32768
 
-	# Copy the u-boot-rockchip.bin to the image at sector 0x40
+	# Copy the bootloader components to the image at their respective sectors
 	dd if="$(STAGING_DIR_IMAGE)"/bootinfo_sd.bin of="$@" seek=0 conv=notrunc
 	dd if="$(STAGING_DIR_IMAGE)"/FSBL.bin of="$@" seek=256 conv=notrunc
 	dd if="$(STAGING_DIR_IMAGE)"/u-boot-env-default.bin of="$@" seek=768 conv=notrunc
@@ -54,7 +51,7 @@ define Device/Default
   KERNEL = kernel-bin
   BOOT_SCRIPT := orangepi-rv2
   IMAGES := sysupgrade.img.gz
-  IMAGE/sysupgrade.img.gz = boot-common | boot-script $$(BOOT_SCRIPT) | pine64-img | gzip | append-metadata
+  IMAGE/sysupgrade.img.gz = boot-common | boot-script $$(BOOT_SCRIPT) | ky-sd-img | gzip | append-metadata
   DEVICE_DTS = ky/$$(SOC)_$(lastword $(subst _, ,$(1)))
   UBOOT_DEVICE_NAME = $(lastword $(subst _, ,$(1)))-$$(SOC)
 endef

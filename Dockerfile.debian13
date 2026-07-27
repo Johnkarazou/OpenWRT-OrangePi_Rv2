@@ -1,0 +1,16 @@
+FROM debian:trixie
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk \
+    gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev \
+    libssl-dev patch perl-modules libthread-queue-any-perl python3-dev \
+    swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl \
+    libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless rsync zip \
+    device-tree-compiler clang bison python3-setuptools file \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -s /bin/bash builduser
+USER builduser
+WORKDIR /home/builduser/openwrt

@@ -1,4 +1,4 @@
-name: Build RV2
+name: Build RV2 (25.12)
 
 on: [push, pull_request]
 
@@ -8,16 +8,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install build prerequisites
+    - name: Build and run Docker environment
       run: |
-        sudo apt-get update
-        sudo apt-get install -y device-tree-compiler
-
-    - name: Build Orange Pi RV2
-      run: |
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        cp orangepi_rv2_defconfig .config
-        make defconfig
-        make -j$(nproc) download
-        make -j$(($(nproc)+1))
+        docker build -t openwrt-build-env -f Dockerfile.debian13 .
+        
+        # Change ownership of the workspace so the container's builduser (UID 1000) can write to it
+        sudo chown -R 1000:1000 .
+        
+        docker run --rm -v ${{ github.workspace }}:/home/builduser/openwrt openwrt-build-env /bin/bash -c "
+          ./scripts/feeds update -a &&
+          ./scripts/feeds install -a &&
+          cp orangepi_rv2_defconfig .config &&
+          make defconfig &&
+          make -j\$(nproc) download &&
+          make -j\$((\$(nproc)+1))
+        "

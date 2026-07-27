@@ -24,3 +24,10 @@ jobs:
           make -j\$(nproc) download &&
           make -j\$((\$(nproc)+1))
         "
+
+    - name: Upload Firmware Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-rv2-firmware
+        path: bin/targets/
+        retention-days: 7

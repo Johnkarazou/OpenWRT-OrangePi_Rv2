@@ -50,7 +50,8 @@ define Device/Default
   PROFILES := Default
   KERNEL = kernel-bin
   BOOT_SCRIPT := orangepi-rv2
-  IMAGES := sysupgrade.img.gz
+  IMAGES := factory.img.gz sysupgrade.img.gz
+  IMAGE/factory.img.gz = boot-common | boot-script $$(BOOT_SCRIPT) | ky-sd-img | gzip
   IMAGE/sysupgrade.img.gz = boot-common | boot-script $$(BOOT_SCRIPT) | ky-sd-img | gzip | append-metadata
   DEVICE_DTS = ky/$$(SOC)_$(lastword $(subst _, ,$(1)))
   UBOOT_DEVICE_NAME = $(lastword $(subst _, ,$(1)))-$$(SOC)

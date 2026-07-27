@@ -37,48 +37,51 @@ case sensitive file system.
 
 ### Requirements
 
-You need the following tools to compile OpenWrt, the package names vary between
-distributions. A complete list with distribution specific packages is found in
-the [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)
-documentation.
+The easiest and most reliable way to build OpenWrt across any OS (Ubuntu, Fedora, Arch Linux, macOS, Windows/WSL) is by using the provided Docker environment. You only need to have [Docker](https://docs.docker.com/get-docker/) installed.
 
-```
-asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
-```
-Copy-paste command below.
-I use Debian 13:
-```
-sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless b43-fwcutter zip device-tree-compiler
-```
 ### Quickstart
 
-# Clone and setup
+# 1. Clone the repository
 
 ```
 git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 24.10
 cd OpenWRT-OrangePi_Rv2
+```
+
+# 2. Build and run the Docker environment
+
+Build the container image and start an interactive session. The current directory is mounted inside the container so all your build artifacts are saved to your host machine.
 
 ```
-# Update and install feeds
+docker build -t openwrt-build-env -f Dockerfile.debian13 .
+docker run -it -v $(pwd):/home/builduser/openwrt openwrt-build-env
+```
+
+> **Troubleshooting Docker Errors:**
+> - If you get `failed to connect to the docker API` or `daemon not running`, start the Docker service on your host machine (e.g., `sudo systemctl start docker`).
+> - If you get `permission denied`, you may need to run the docker commands with `sudo` or [add your user to the docker group](https://docs.docker.com/engine/install/linux-postinstall/).
+
+> **Note:** Run all the following commands **inside** the Docker container.
+
+# 3. Update and install feeds
 
 ```
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-
 ```
-# Apply Orange Pi RV2 configuration
+
+# 4. Apply Orange Pi RV2 configuration
 
 ```
 cp orangepi_rv2_defconfig .config
 make defconfig
-
 ```
-# Download sources and build
+
+# 5. Download sources and build
 
 ```
 make -j $(nproc) download
 make -j $(($(nproc)+1))
-
 ```
 ## Custom Configuration Includes:
 
@@ -86,56 +89,50 @@ make -j $(($(nproc)+1))
 - **Kernel Partition Size:** 128MB
 - **Root Filesystem Partition Size:** 2048MB
 
-### Package Selection
+### Custom Package Additions (Compared to Xunlong Default)
 
 **System & Monitoring**
-- dnsmasq-full
 - zram-swap
 - btop
 - htop
-- lm-sensors
 - sudo
 - nano
 - vim
+- bash
+
+**Docker & Containers**
+- docker
+- docker-compose
+- dockerd
+- containerd
+- runc
 
 **PHP8 & Modules**
-- php8
-- php8-cgi
-- php8-fpm
-- php8-mod-ctype
-- php8-mod-curl
-- php8-mod-gd
-- php8-mod-intl
-- php8-mod-mbstring
-- php8-mod-mysqli
-- php8-mod-mysql
-- php8-mod-sqlite3
-- php8-mod-xml
-- php8-mod-zip
+- php8 (along with php8-cgi and php8-fpm)
+- php8-mod-* (curl, gd, intl, mbstring, mysqli, pdo, xml, zip, and more)
 
 **Database**
-- libmariadb
-- mariadb-server-base
 - mariadb-server
+- libmariadb
 
-**LuCI & Web Interface**
-- luci-app-adblock
-- luci-app-ddns
-- luci-app-ttyd
-- luci-app-uhttpd
+**Networking & Firewall**
+- dnsmasq-full (with dnssec, dhcpv6, ipset, etc.)
+- firewall4 & iptables-wrappers
+- wireguard-tools & luci-proto-wireguard
+- pbr & luci-app-pbr (Policy Based Routing)
+- ip-full
+- dropbear
+
+**Web Interface**
 - luci-theme-material
+- luci-app-uhttpd
 
-**Networking & Protocols**
-- luci-proto-wireguard
-
-**Utilities & Libraries**
-- liblz4
-- lz4
-- unzip
-- xz-utils
-- blkid
+**Utilities & Storage**
+- e2fsprogs / btrfs-progs / f2fs-tools
+- fdisk / parted
 - nvme-cli
 - swap-utils
+- lz4 / unzip / xz-utils
 
 ### Related Repositories
 

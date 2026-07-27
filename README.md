@@ -83,8 +83,9 @@ make -j $(($(nproc)+1))
 ## Custom Configuration Includes:
 
 ### Kernel Configuration
-- **Kernel Partition Size:** 128MB
-- **Root Filesystem Partition Size:** 2048MB
+- **Kernel Partition Size:** 64MB
+- **Root Filesystem Partition Size:** 256MB
+- **Auto-expanding Userdata:** Enabled via `ky-userdata` package (formats remaining NVMe/SD space as `/userdata`)
 
 ### Package Selection
 
@@ -127,6 +128,9 @@ make -j $(($(nproc)+1))
 
 **Networking & Protocols**
 - luci-proto-wireguard
+- pbr (Policy Based Routing)
+- luci-app-pbr
+- ip-full
 
 **Utilities & Libraries**
 - liblz4

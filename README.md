@@ -83,6 +83,11 @@ make defconfig
 make -j $(nproc) download
 make -j $(($(nproc)+1))
 ```
+
+# 6. Connect to the Router
+
+Once the firmware is flashed, the default IP address to connect to the router (via SSH or the LuCI web interface) is `192.168.2.1`.
+
 ## Custom Configuration Includes:
 
 ### Kernel Configuration

@@ -9,7 +9,7 @@ define Device/x1_orangepi-rv2
   DEVICE_VENDOR := KY
   DEVICE_MODEL := Orange Pi RV 2
   SOC := x1
-  DEVICE_PACKAGES := kmod-usb-net-rtl8152
+  DEVICE_PACKAGES := kmod-usb-net-rtl8152 u-boot-orangepi-rv2-x1
 endef
 TARGET_DEVICES += x1_orangepi-rv2
 
@@ -17,6 +17,6 @@ define Device/x1_orangepi-r2s
   DEVICE_VENDOR := KY
   DEVICE_MODEL := Orange Pi R2S
   SOC := x1
-  DEVICE_PACKAGES := kmod-usb-net-rtl8152 kmod-r8169
+  DEVICE_PACKAGES := kmod-usb-net-rtl8152 kmod-r8169 u-boot-orangepi-r2s-x1
 endef
 TARGET_DEVICES += x1_orangepi-r2s

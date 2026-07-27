@@ -7,6 +7,9 @@ BOARDNAME:=Ky
 FEATURES:=ext4 audio usb usbgadget display gpio fpu pci pcie rootfs-part boot-part squashfs
 SUBTARGETS:=riscv64
 
+KERNEL_PARTSIZE:=64
+ROOTFS_PARTSIZE:=256
+
 KERNEL_PATCHVER:=6.6
 
 define Target/Description

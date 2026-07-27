@@ -34,9 +34,11 @@ define U-Boot/orangepi-rv2-x1
 endef
 
 UBOOT_TARGETS := \
-	x1
+	orangepi-r2s-x1 \
+	orangepi-rv2-x1
+
 define Build/Configure
-	$(call Build/Configure/U-Boot)
+	# $(call Build/Configure/U-Boot)
 	$(MAKE) -C $(PKG_BUILD_DIR) x1_defconfig
 endef
 

@@ -23,7 +23,7 @@ image usable to migrate from a vendor stock firmware to OpenWrt, try the
 If your device is supported, please follow the **Info** link to see install
 instructions or consult the support resources listed below.
 
-##
+## 
 
 An advanced user may require additional or specific package. (Toolchain, SDK, ...) For everything else than simple firmware download, try the wiki download page:
 
@@ -43,24 +43,103 @@ the [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/i
 documentation.
 
 ```
-binutils bzip2 diff find flex gawk gcc-6+ getopt grep install libc-dev libz-dev
-make4.1+ perl python3.8+ rsync subversion unzip which
+asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless rsync zip device-tree-compiler
 ```
-
+Copy-paste command below.
+I use Debian 13:
+```
+sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless rsync zip device-tree-compiler
+```
 ### Quickstart
 
-1. Run `./scripts/feeds update -a` to obtain all the latest package definitions
-   defined in feeds.conf / feeds.conf.default
+# Clone and setup
 
-2. Run `./scripts/feeds install -a` to install symlinks for all obtained
-   packages into package/feeds/
+```
+git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 25.12
+cd OpenWRT-OrangePi_Rv2
 
-3. Run `make menuconfig` to select your preferred configuration for the
-   toolchain, target system & firmware packages.
+```
+# Update and install feeds
 
-4. Run `make` to build your firmware. This will download all sources, build the
-   cross-compile toolchain and then cross-compile the GNU/Linux kernel & all chosen
-   applications for your target system.
+```
+./scripts/feeds update -a
+./scripts/feeds install -a
+
+```
+# Apply Orange Pi RV2 configuration
+
+```
+cp orangepi_rv2_defconfig .config
+make defconfig
+
+```
+# Download sources and build
+
+```
+make -j $(nproc) download
+make -j $(($(nproc)+1))
+
+```
+## Custom Configuration Includes:
+
+### Kernel Configuration
+- **Kernel Partition Size:** 64MB
+- **Root Filesystem Partition Size:** 256MB
+- **Auto-expanding Userdata:** Enabled via `ky-userdata` package (formats remaining NVMe/SD space as `/userdata`)
+
+### Package Selection
+
+**System & Monitoring**
+- dnsmasq-full
+- zram-swap
+- btop
+- htop
+- lm-sensors
+- sudo
+- nano
+- vim
+
+**PHP8 & Modules**
+- php8
+- php8-cgi
+- php8-fpm
+- php8-mod-ctype
+- php8-mod-curl
+- php8-mod-gd
+- php8-mod-intl
+- php8-mod-mbstring
+- php8-mod-mysqli
+- php8-mod-mysql
+- php8-mod-sqlite3
+- php8-mod-xml
+- php8-mod-zip
+
+**Database**
+- libmariadb
+- mariadb-server-base
+- mariadb-server
+
+**LuCI & Web Interface**
+- luci-app-adblock
+- luci-app-ddns
+- luci-app-ttyd
+- luci-app-uhttpd
+- luci-theme-material
+
+**Networking & Protocols**
+- luci-proto-wireguard
+- pbr (Policy Based Routing)
+- luci-app-pbr
+- ip-full
+
+**Utilities & Libraries**
+- liblz4
+- lz4
+- unzip
+- xz-utils
+- blkid
+- nvme-cli
+- swap-utils
 
 ### Related Repositories
 

@@ -1,0 +1,82 @@
+From 52f728aec661b63c2622ec719631c85a08a85a66 Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Mon, 10 Feb 2025 20:50:17 +0800
+Subject: [PATCH 08/11] Update arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
+
+---
+ arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts | 25 ++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
+index 428e7271a..72565aa86 100644
+--- a/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
++++ b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
+@@ -211,7 +211,7 @@ &pwm14 {
+ &dpu_online2_dsi {
+ 	memory-region = <&dpu_resv>;
+ 	ky-dpu-bitclk = <500000000>;
+-	//ky-dpu-escclk = <76800000>;
++	/* ky-dpu-escclk = <76800000>; */
+ 	dsi_1v2-supply = <&ldo_5>;
+ 	vin-supply-names = "dsi_1v2";
+ 	status = "disabled";
+@@ -294,7 +294,7 @@ es8323: es8323@11 {
+ 		earphone-sw-gpio = <&gpio 79 0>;
+         };
+ 
+-	touchscreen@14 {
++	touchscreen: touchscreen@14 {
+ 		compatible = "goodix,gt9271";
+ 		reg = <0x14>;
+ 		interrupt-parent = <&gpio>;
+@@ -308,6 +308,7 @@ touchscreen@14 {
+ 		touchscreen-swapped-x-y;
+ 		touchscreen-size-x = <1280>;
+ 		touchscreen-size-y = <800>;
++		status = "disabled";
+ 	};
+ };
+ 
+@@ -675,6 +676,13 @@ X1_PADCONF(PRI_TDI, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_1V8_DS2))	/* uart5_txd
+ 			X1_PADCONF(PRI_TMS, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_1V8_DS2))	/* uart5_rxd */
+ 		>;
+ 	};
++
++	pinctrl_uart8_3: uart8_3_grp {
++		pinctrl-single,pins =<
++			X1_PADCONF(GPIO_75, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_3V_DS4))	/* uart8_txd */
++			X1_PADCONF(GPIO_76, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_3V_DS4))	/* uart8_rxd */
++		>;
++	};
+ };
+ 
+ &gpio{
+@@ -1143,12 +1151,25 @@ spi_dev0: spi@0 {
+ 	};
+ };
+ 
++&flexcan0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_can_0>;
++	clock-frequency = <80000000>;
++	status = "disabled";
++};
++
+ &uart5 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart5_4>;
+ 	status = "disabled";
+ };
+ 
++&uart8 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart8_3>;
++	status = "disabled";
++};
++
+ &uart9 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart9_2>;
+-- 
+2.34.1
+

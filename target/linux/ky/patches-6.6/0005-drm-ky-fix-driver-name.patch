@@ -1,0 +1,25 @@
+From c7121983442e93b139c649b6cfd47c0ea6db68ad Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Mon, 10 Feb 2025 20:37:57 +0800
+Subject: [PATCH 05/11] drm: ky: fix driver name
+
+---
+ drivers/gpu/drm/ky/ky_drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/ky/ky_drm.c b/drivers/gpu/drm/ky/ky_drm.c
+index dec7674c2..9e084de0b 100644
+--- a/drivers/gpu/drm/ky/ky_drm.c
++++ b/drivers/gpu/drm/ky/ky_drm.c
+@@ -23,7 +23,7 @@
+ #include "ky_dmmu.h"
+ #include "ky_gem.h"
+ 
+-#define DRIVER_NAME	"ky"
++#define DRIVER_NAME	"rvdisplay"
+ #define DRIVER_DESC	"Ky SoCs' DRM Driver"
+ #define DRIVER_DATE	"20231115"
+ #define DRIVER_MAJOR	1
+-- 
+2.34.1
+

@@ -1,0 +1,49 @@
+From bfcd90b9436b5af225dda52d5eb13f8d115d1a93 Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Thu, 12 Dec 2024 22:10:01 +0800
+Subject: [PATCH 03/11] Update drivers/net/ethernet/ky/x1-emac.c
+
+---
+ drivers/net/ethernet/ky/x1-emac.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/net/ethernet/ky/x1-emac.c b/drivers/net/ethernet/ky/x1-emac.c
+index cef02db07..c322b3642 100644
+--- a/drivers/net/ethernet/ky/x1-emac.c
++++ b/drivers/net/ethernet/ky/x1-emac.c
+@@ -2647,6 +2647,20 @@ static int emac_config_dt(struct platform_device *pdev, struct emac_priv *priv)
+ 	return 0;
+ }
+ 
++#define RTL_YT8531_PHY_ID 0x4f51e91b
++static int phy_yt8531_led_fixup(struct phy_device *phydev)
++{
++	printk("%s in\n", __func__);
++	phy_write(phydev, 0x1e, 0xa00d);
++	phy_write(phydev, 0x1f, 0x2600);
++	phy_write(phydev, 0x1e, 0xa00e);
++	phy_write(phydev, 0x1f, 0x2070);
++	phy_write(phydev, 0x1e, 0xa00f);
++	phy_write(phydev, 0x1f, 0x0a);
++
++	return 0;
++}
++
+ static int emac_probe(struct platform_device *pdev)
+ {
+ 	struct emac_priv *priv;
+@@ -2749,6 +2763,11 @@ static int emac_probe(struct platform_device *pdev)
+ 		pr_err("register_netdev failed\n");
+ 		goto err_mdio_deinit;
+ 	}
++
++	ret = phy_register_fixup_for_uid(RTL_YT8531_PHY_ID, 0xffffffff, phy_yt8531_led_fixup);
++	if (ret)
++		pr_warn("Cannot register PHY board fixup.\n");
++
+ 	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+ 
+ 	device_enable_async_suspend(&pdev->dev);
+-- 
+2.34.1
+

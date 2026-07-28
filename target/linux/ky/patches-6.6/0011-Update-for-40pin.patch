@@ -1,0 +1,96 @@
+From 0e0b7865eb5ca1ba3d0d9c0d900672db18a00358 Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Mon, 13 Jan 2025 10:08:55 +0800
+Subject: [PATCH 11/11] Update for 40pin
+
+---
+ arch/riscv/boot/dts/ky/overlay/Makefile     |  2 ++
+ arch/riscv/boot/dts/ky/overlay/x1-can0.dts  | 12 ++++++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-uart8.dts | 12 ++++++++++++
+ arch/riscv/boot/dts/ky/x1.dtsi              | 18 +++++++++---------
+ 4 files changed, 35 insertions(+), 9 deletions(-)
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-can0.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
+
+diff --git a/arch/riscv/boot/dts/ky/overlay/Makefile b/arch/riscv/boot/dts/ky/overlay/Makefile
+index 78af38cd1..0b51674cc 100644
+--- a/arch/riscv/boot/dts/ky/overlay/Makefile
++++ b/arch/riscv/boot/dts/ky/overlay/Makefile
+@@ -1,7 +1,9 @@
+ dtbo-$(CONFIG_SOC_KY_X1) += \
+ 	x1-i2c3.dtbo \
+ 	x1-i2c4.dtbo \
++	x1-can0.dtbo \
+ 	x1-uart5.dtbo \
++	x1-uart8.dtbo \
+ 	x1-uart9.dtbo \
+ 	x1-pwm7.dtbo \
+ 	x1-pwm9.dtbo \
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-can0.dts b/arch/riscv/boot/dts/ky/overlay/x1-can0.dts
+new file mode 100644
+index 000000000..bf25cf00d
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-can0.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&flexcan0>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts b/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
+new file mode 100644
+index 000000000..db4799bf7
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&uart8>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/x1.dtsi b/arch/riscv/boot/dts/ky/x1.dtsi
+index def340170..ae16dd441 100644
+--- a/arch/riscv/boot/dts/ky/x1.dtsi
++++ b/arch/riscv/boot/dts/ky/x1.dtsi
+@@ -20,15 +20,15 @@ / {
+ 
+ 	aliases {
+ 		serial0 = &uart0;
+-		serial1 = &uart2;
+-		serial2 = &uart3;
+-		serial3 = &uart4;
+-		serial4 = &uart5;
+-		serial5 = &uart6;
+-		serial6 = &uart7;
+-		serial7 = &uart8;
+-		serial8 = &uart9;
+-		serial9 = &r_uart1;
++		serial1 = &r_uart1;
++		serial2 = &uart2;
++		serial3 = &uart3;
++		serial4 = &uart4;
++		serial5 = &uart5;
++		serial6 = &uart6;
++		serial7 = &uart7;
++		serial8 = &uart8;
++		serial9 = &uart9;
+ 		mmc0 = &sdhci0;
+ 		mmc1 = &sdhci1;
+ 		mmc2 = &sdhci2;
+-- 
+2.34.1
+

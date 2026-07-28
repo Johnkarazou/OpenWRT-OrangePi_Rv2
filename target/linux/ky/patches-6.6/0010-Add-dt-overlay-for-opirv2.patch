@@ -1,0 +1,228 @@
+From 93ee8e399bcea4135936eb2d3e930f5ba4772ad4 Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Mon, 10 Feb 2025 20:27:07 +0800
+Subject: [PATCH 10/11] Add dt overlay for opirv2
+
+---
+ arch/riscv/boot/dts/ky/Makefile               |  2 ++
+ arch/riscv/boot/dts/ky/overlay/Makefile       | 23 +++++++++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-i2c3.dts    | 12 ++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-i2c4.dts    | 12 ++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-lcd.dts     | 28 +++++++++++++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-pwm7.dts    | 12 ++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-pwm9.dts    | 12 ++++++++
+ .../dts/ky/overlay/x1-spi3-cs0-spidev.dts     | 12 ++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-uart5.dts   | 12 ++++++++
+ arch/riscv/boot/dts/ky/overlay/x1-uart9.dts   | 12 ++++++++
+ 10 files changed, 137 insertions(+)
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/Makefile
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-i2c3.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-i2c4.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-lcd.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-pwm7.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-pwm9.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-spi3-cs0-spidev.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-uart5.dts
+ create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-uart9.dts
+
+diff --git a/arch/riscv/boot/dts/ky/Makefile b/arch/riscv/boot/dts/ky/Makefile
+index 4dca42133..ef7770e96 100644
+--- a/arch/riscv/boot/dts/ky/Makefile
++++ b/arch/riscv/boot/dts/ky/Makefile
+@@ -1,2 +1,4 @@
+ dtb-$(CONFIG_SOC_KY_X1) += x1_orangepi-rv2.dtb
+ obj-$(CONFIG_BUILTIN_DTB) += $(addsuffix .o, $(dtb-y))
++
++subdir-y += overlay
+diff --git a/arch/riscv/boot/dts/ky/overlay/Makefile b/arch/riscv/boot/dts/ky/overlay/Makefile
+new file mode 100644
+index 000000000..78af38cd1
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/Makefile
+@@ -0,0 +1,23 @@
++dtbo-$(CONFIG_SOC_KY_X1) += \
++	x1-i2c3.dtbo \
++	x1-i2c4.dtbo \
++	x1-uart5.dtbo \
++	x1-uart9.dtbo \
++	x1-pwm7.dtbo \
++	x1-pwm9.dtbo \
++	x1-lcd.dtbo \
++	x1-spi3-cs0-spidev.dtbo \
++
++#scr-$(CONFIG_SOC_KY_X1) += \
++#        sun55i-t527-fixup.scr
++#
++#dtbotxt-$(CONFIG_SOC_KY_X1) += \
++#        README.sun55i-t527-overlays
++#
++targets += $(dtbo-y)
++#$(scr-y) $(dtbotxt-y)
++
++always-y       := $(dtbo-y)
++#$(scr-y) $(dtbotxt-y)
++clean-files    := *.dtbo
++#*.scr
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-i2c3.dts b/arch/riscv/boot/dts/ky/overlay/x1-i2c3.dts
+new file mode 100644
+index 000000000..8f979fe32
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-i2c3.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&i2c3>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-i2c4.dts b/arch/riscv/boot/dts/ky/overlay/x1-i2c4.dts
+new file mode 100644
+index 000000000..6fc22d959
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-i2c4.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&i2c4>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-lcd.dts b/arch/riscv/boot/dts/ky/overlay/x1-lcd.dts
+new file mode 100644
+index 000000000..f7d8f8ea0
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-lcd.dts
+@@ -0,0 +1,28 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&dpu_online2_dsi>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@1 {
++		target = <&dsi2>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++
++	fragment@2 {
++		target = <&touchscreen>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-pwm7.dts b/arch/riscv/boot/dts/ky/overlay/x1-pwm7.dts
+new file mode 100644
+index 000000000..1fd0e1558
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-pwm7.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&pwm7>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-pwm9.dts b/arch/riscv/boot/dts/ky/overlay/x1-pwm9.dts
+new file mode 100644
+index 000000000..68bfb4285
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-pwm9.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&rpwm9>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-spi3-cs0-spidev.dts b/arch/riscv/boot/dts/ky/overlay/x1-spi3-cs0-spidev.dts
+new file mode 100644
+index 000000000..fe400bd69
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-spi3-cs0-spidev.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&spi3>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-uart5.dts b/arch/riscv/boot/dts/ky/overlay/x1-uart5.dts
+new file mode 100644
+index 000000000..548e74ff8
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-uart5.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&uart5>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+diff --git a/arch/riscv/boot/dts/ky/overlay/x1-uart9.dts b/arch/riscv/boot/dts/ky/overlay/x1-uart9.dts
+new file mode 100644
+index 000000000..de36d18e0
+--- /dev/null
++++ b/arch/riscv/boot/dts/ky/overlay/x1-uart9.dts
+@@ -0,0 +1,12 @@
++/dts-v1/;
++/plugin/;
++
++/ {
++	fragment@0 {
++		target = <&uart9>;
++
++		__overlay__ {
++			status = "okay";
++		};
++	};
++};
+-- 
+2.34.1
+

@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# Find PARTUUID from cmdline
+PARTUUID=$(sed -n 's/^.*root=PARTUUID=\([^ ]*\).*$/\1/p' /proc/cmdline)
+
+if [ -z "$PARTUUID" ]; then
+    # Fallback to mounting points if cmdline doesn't have PARTUUID
+    ROOT_PART=$(df / | awk 'NR==2 {print $1}')
+else
+    # Find block device matching this PARTUUID
+    ROOT_PART=$(blkid | grep -i "PARTUUID=\"${PARTUUID}\"" | awk -F: '{print $1}')
+fi
+
+# Resolve /dev/root or empty strings
+if [ -z "$ROOT_PART" ] || [ "$ROOT_PART" = "/dev/root" ]; then
+    # Try finding it from procd block info
+    ROOT_PART=$(block info | grep -E 'MOUNT="/"|MOUNT="/rom"' | awk -F: '{print $1}' | head -n1)
+fi
+
+[ -z "$ROOT_PART" ] && exit 0
+
+# Extract the base disk from the partition string
+# e.g., /dev/nvme0n1p2 -> /dev/nvme0n1, /dev/sda2 -> /dev/sda
+DISK=$(echo "$ROOT_PART" | sed -E 's/p?[0-9]+$//')
+
+[ -b "$DISK" ] || exit 0
+
+# Check if partition 3 already exists
+if [ -b "${DISK}p3" ] || [ -b "${DISK}3" ]; then
+    exit 0
+fi
+
+# Create the 3rd partition using the rest of the disk space
+echo -e "n\np\n3\n\n\nw\n" | fdisk "$DISK"
+
+# Re-read partition table
+partx -u "$DISK" 2>/dev/null || true
+sync
+sleep 2
+
+# Identify the new partition
+if [ -b "${DISK}p3" ]; then
+    PART3="${DISK}p3"
+elif [ -b "${DISK}3" ]; then
+    PART3="${DISK}3"
+else
+    exit 0 # Failed to create or find partition
+fi
+
+# Format the partition
+mkfs.ext4 -L userdata "$PART3"
+
+# Setup UCI for fstab to mount it at /userdata
+mkdir -p /userdata
+uci -q delete fstab.userdata
+uci set fstab.userdata="mount"
+uci set fstab.userdata.device="$PART3"
+uci set fstab.userdata.target="/userdata"
+uci set fstab.userdata.fstype="ext4"
+uci set fstab.userdata.options="rw,sync"
+uci set fstab.userdata.enabled="1"
+uci commit fstab
+
+# Mount it immediately so it's ready without needing a reboot
+mount "$PART3" /userdata
+
+# Return 0 so OpenWrt deletes this script and it never runs again
+exit 0

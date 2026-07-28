@@ -1,0 +1,33 @@
+name: Build RV2 (25.12)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build and run Docker environment
+      run: |
+        docker build -t openwrt-build-env -f Dockerfile.debian13 .
+        
+        # Change ownership of the workspace so the container's builduser (UID 1000) can write to it
+        sudo chown -R 1000:1000 .
+        
+        docker run --rm -v ${{ github.workspace }}:/home/builduser/openwrt openwrt-build-env /bin/bash -c "
+          ./scripts/feeds update -a &&
+          ./scripts/feeds install -a &&
+          cp orangepi_rv2_defconfig .config &&
+          make defconfig &&
+          make -j\$(nproc) download &&
+          make -j\$((\$(nproc)+1))
+        "
+
+    - name: Upload Firmware Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: openwrt-rv2-firmware
+        path: bin/targets/
+        retention-days: 7

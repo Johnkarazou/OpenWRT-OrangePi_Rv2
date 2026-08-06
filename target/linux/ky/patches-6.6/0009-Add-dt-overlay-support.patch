@@ -9,8 +9,6 @@ Subject: [PATCH 09/11] Add dt overlay support
  scripts/Makefile.lib     | 23 +++++++++++++++++++++++
  3 files changed, 38 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/.gitignore b/arch/arm/boot/.gitignore
-index 8c759326b..e6ce8f6ad 100644
 --- a/arch/arm/boot/.gitignore
 +++ b/arch/arm/boot/.gitignore
 @@ -4,3 +4,5 @@ zImage
@@ -19,11 +17,9 @@ index 8c759326b..e6ce8f6ad 100644
  uImage
 +*.dtb*
 +*.scr
-diff --git a/scripts/Makefile.dtbinst b/scripts/Makefile.dtbinst
-index fa3ad33a1..659b50ee0 100644
 --- a/scripts/Makefile.dtbinst
 +++ b/scripts/Makefile.dtbinst
-@@ -18,9 +18,12 @@ include $(srctree)/scripts/Kbuild.include
+@@ -18,9 +18,12 @@ include $(srctree)/scripts/Kbuild.includ
  include $(kbuild-file)
  
  dtbs    := $(addprefix $(dst)/, $(dtb-y) $(if $(CONFIG_OF_ALL_DTBS),$(dtb-)))
@@ -53,11 +49,9 @@ index fa3ad33a1..659b50ee0 100644
  PHONY += $(subdirs)
  $(subdirs):
  	$(Q)$(MAKE) $(dtbinst)=$@ dst=$(if $(CONFIG_ARCH_WANT_FLAT_DTB_INSTALL),$(dst),$(patsubst $(obj)/%,$(dst)/%,$@))
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index e702552fb..99922d875 100644
 --- a/scripts/Makefile.lib
 +++ b/scripts/Makefile.lib
-@@ -88,6 +88,9 @@ base-dtb-y := $(foreach m, $(multi-dtb-y), $(firstword $(call suffix-search, $m,
+@@ -88,6 +88,9 @@ base-dtb-y := $(foreach m, $(multi-dtb-y
  
  always-y			+= $(dtb-y)
  
@@ -77,7 +71,7 @@ index e702552fb..99922d875 100644
  # Disable noisy checks by default
  ifeq ($(findstring 1,$(KBUILD_EXTRA_WARN)),)
  DTC_FLAGS += -Wno-unit_address_vs_reg \
-@@ -425,6 +431,23 @@ $(obj)/%.dtb: $(src)/%.dts $(DTC) $(DT_TMP_SCHEMA) FORCE
+@@ -425,6 +431,23 @@ $(obj)/%.dtb: $(src)/%.dts $(DTC) $(DT_T
  $(obj)/%.dtbo: $(src)/%.dtso $(DTC) FORCE
  	$(call if_changed_dep,dtc)
  
@@ -101,6 +95,3 @@ index e702552fb..99922d875 100644
  dtc-tmp = $(subst $(comma),_,$(dot-target).dts.tmp)
  
  # Bzip2
--- 
-2.34.1
-

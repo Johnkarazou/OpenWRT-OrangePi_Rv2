@@ -7,11 +7,9 @@ Subject: [PATCH 03/11] Update drivers/net/ethernet/ky/x1-emac.c
  drivers/net/ethernet/ky/x1-emac.c | 19 +++++++++++++++++++
  1 file changed, 19 insertions(+)
 
-diff --git a/drivers/net/ethernet/ky/x1-emac.c b/drivers/net/ethernet/ky/x1-emac.c
-index cef02db07..c322b3642 100644
 --- a/drivers/net/ethernet/ky/x1-emac.c
 +++ b/drivers/net/ethernet/ky/x1-emac.c
-@@ -2647,6 +2647,20 @@ static int emac_config_dt(struct platform_device *pdev, struct emac_priv *priv)
+@@ -2647,6 +2647,20 @@ static int emac_config_dt(struct platfor
  	return 0;
  }
  
@@ -32,7 +30,7 @@ index cef02db07..c322b3642 100644
  static int emac_probe(struct platform_device *pdev)
  {
  	struct emac_priv *priv;
-@@ -2749,6 +2763,11 @@ static int emac_probe(struct platform_device *pdev)
+@@ -2749,6 +2763,11 @@ static int emac_probe(struct platform_de
  		pr_err("register_netdev failed\n");
  		goto err_mdio_deinit;
  	}
@@ -44,6 +42,3 @@ index cef02db07..c322b3642 100644
  	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
  
  	device_enable_async_suspend(&pdev->dev);
--- 
-2.34.1
-

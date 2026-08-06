@@ -12,8 +12,6 @@ Subject: [PATCH 11/11] Update for 40pin
  create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-can0.dts
  create mode 100644 arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
 
-diff --git a/arch/riscv/boot/dts/ky/overlay/Makefile b/arch/riscv/boot/dts/ky/overlay/Makefile
-index 78af38cd1..0b51674cc 100644
 --- a/arch/riscv/boot/dts/ky/overlay/Makefile
 +++ b/arch/riscv/boot/dts/ky/overlay/Makefile
 @@ -1,7 +1,9 @@
@@ -26,9 +24,6 @@ index 78af38cd1..0b51674cc 100644
  	x1-uart9.dtbo \
  	x1-pwm7.dtbo \
  	x1-pwm9.dtbo \
-diff --git a/arch/riscv/boot/dts/ky/overlay/x1-can0.dts b/arch/riscv/boot/dts/ky/overlay/x1-can0.dts
-new file mode 100644
-index 000000000..bf25cf00d
 --- /dev/null
 +++ b/arch/riscv/boot/dts/ky/overlay/x1-can0.dts
 @@ -0,0 +1,12 @@
@@ -44,9 +39,6 @@ index 000000000..bf25cf00d
 +		};
 +	};
 +};
-diff --git a/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts b/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
-new file mode 100644
-index 000000000..db4799bf7
 --- /dev/null
 +++ b/arch/riscv/boot/dts/ky/overlay/x1-uart8.dts
 @@ -0,0 +1,12 @@
@@ -62,11 +54,9 @@ index 000000000..db4799bf7
 +		};
 +	};
 +};
-diff --git a/arch/riscv/boot/dts/ky/x1.dtsi b/arch/riscv/boot/dts/ky/x1.dtsi
-index def340170..ae16dd441 100644
 --- a/arch/riscv/boot/dts/ky/x1.dtsi
 +++ b/arch/riscv/boot/dts/ky/x1.dtsi
-@@ -20,15 +20,15 @@ / {
+@@ -20,15 +20,15 @@
  
  	aliases {
  		serial0 = &uart0;
@@ -91,6 +81,3 @@ index def340170..ae16dd441 100644
  		mmc0 = &sdhci0;
  		mmc1 = &sdhci1;
  		mmc2 = &sdhci2;
--- 
-2.34.1
-

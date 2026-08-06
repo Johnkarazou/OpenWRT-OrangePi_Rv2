@@ -7,8 +7,6 @@ Subject: [PATCH 06/11] Fix arch/riscv/Kconfig.socs
  arch/riscv/Kconfig.socs | 33 ---------------------------------
  1 file changed, 33 deletions(-)
 
-diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-index 72288d053..f02bb3937 100644
 --- a/arch/riscv/Kconfig.socs
 +++ b/arch/riscv/Kconfig.socs
 @@ -128,41 +128,8 @@ choice
@@ -21,8 +19,8 @@ index 72288d053..f02bb3937 100644
 -		help
 -		  select Ky k2 Platform SOCs.
 -
--endchoice
--
+ endchoice
+ 
 -if SOC_KY_X1
 -
 -choice
@@ -40,8 +38,8 @@ index 72288d053..f02bb3937 100644
 -		bool "x1"
 -		help
 -		  This enables support for Ky x1-x Platform Hardware.
- endchoice
- 
+-endchoice
+-
 -config SOC_KY_X1_FPGA
 -	bool "Ky X1 serial SoC FPGA platform"
 -	default n
@@ -53,6 +51,3 @@ index 72288d053..f02bb3937 100644
  config BIND_THREAD_TO_AICORES
  	bool "enable bind ai cores when use AI instruction"
  	default y
--- 
-2.34.1
-

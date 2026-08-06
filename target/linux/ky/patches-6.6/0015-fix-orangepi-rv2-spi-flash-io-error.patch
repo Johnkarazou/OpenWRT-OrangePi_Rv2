@@ -1,0 +1,23 @@
+Index: b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
+===================================================================
+--- a/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
++++ b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
+@@ -983,6 +983,18 @@
+ 		spi-max-frequency = <26500000>;
+ 		m25p,fast-read;
+ 		broken-flash-reset;
+ 		status = "okay";
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "spi-flash";
++				/* Mask out the last 64KB to avoid block 4080 I/O errors */
++				reg = <0x0 0xff0000>;
++			};
++		};
+ 	};
+ };

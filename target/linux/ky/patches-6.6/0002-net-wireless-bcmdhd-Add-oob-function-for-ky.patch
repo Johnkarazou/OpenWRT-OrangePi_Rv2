@@ -7,11 +7,9 @@ Subject: [PATCH 02/11] net: wireless: bcmdhd: Add oob function for ky
  drivers/net/wireless/bcmdhd/dhd_gpio.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/bcmdhd/dhd_gpio.c b/drivers/net/wireless/bcmdhd/dhd_gpio.c
-index 9ae8ff2f1..5d357f004 100644
 --- a/drivers/net/wireless/bcmdhd/dhd_gpio.c
 +++ b/drivers/net/wireless/bcmdhd/dhd_gpio.c
-@@ -62,8 +62,8 @@ dhd_wlan_set_power(int on, wifi_adapter_info_t *adapter)
+@@ -62,8 +62,8 @@ dhd_wlan_set_power(int on, wifi_adapter_
  			}
  		}
  #ifdef CUSTOMER_HW_KY
@@ -22,7 +20,7 @@ index 9ae8ff2f1..5d357f004 100644
  #endif
  #ifdef CUSTOMER_HW_ALLWINNER
  		sunxi_wlan_set_power(1);
-@@ -108,7 +108,7 @@ dhd_wlan_set_power(int on, wifi_adapter_info_t *adapter)
+@@ -108,7 +108,7 @@ dhd_wlan_set_power(int on, wifi_adapter_
  		}
  #if defined(BCMSDIO) && defined (CUSTOMER_HW_KY)
  		//ky_sdio_detect_change(0);
@@ -31,6 +29,3 @@ index 9ae8ff2f1..5d357f004 100644
  #endif
  #if defined(BCMSDIO) && defined (CUSTOMER_HW_ALLWINNER)
  		sunxi_wlan_set_power(0);
--- 
-2.34.1
-

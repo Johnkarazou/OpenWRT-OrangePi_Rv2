@@ -69,8 +69,6 @@ Subject: [PATCH 07/11] delete unuse dts
  delete mode 100644 arch/riscv/boot/dts/ky/x1_mingo.dts
  delete mode 100644 arch/riscv/boot/dts/ky/x1_uav.dts
 
-diff --git a/arch/riscv/boot/dts/ky/Makefile b/arch/riscv/boot/dts/ky/Makefile
-index bc70cd349..4dca42133 100644
 --- a/arch/riscv/boot/dts/ky/Makefile
 +++ b/arch/riscv/boot/dts/ky/Makefile
 @@ -1,12 +1,2 @@
@@ -87,9 +85,6 @@ index bc70cd349..4dca42133 100644
 -				  x1_bit-brick.dtb
 +dtb-$(CONFIG_SOC_KY_X1) += x1_orangepi-rv2.dtb
  obj-$(CONFIG_BUILTIN_DTB) += $(addsuffix .o, $(dtb-y))
-diff --git a/arch/riscv/boot/dts/ky/m1-x_milkv-jupiter.dts b/arch/riscv/boot/dts/ky/m1-x_milkv-jupiter.dts
-deleted file mode 100644
-index d0f42f9e1..000000000
 --- a/arch/riscv/boot/dts/ky/m1-x_milkv-jupiter.dts
 +++ /dev/null
 @@ -1,1164 +0,0 @@
@@ -1257,9 +1252,6 @@ index d0f42f9e1..000000000
 -	pinctrl-0 = <&pinctrl_rpwm2_0>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_fpga.dts b/arch/riscv/boot/dts/ky/x1-pro_fpga.dts
-deleted file mode 100644
-index ee29af544..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_fpga.dts
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -1295,9 +1287,6 @@ index ee29af544..000000000
 -	status = "okay";
 -};
 -
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_fpga_1x4.dts b/arch/riscv/boot/dts/ky/x1-pro_fpga_1x4.dts
-deleted file mode 100644
-index 3e6c0c8d4..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_fpga_1x4.dts
 +++ /dev/null
 @@ -1,161 +0,0 @@
@@ -1462,9 +1451,6 @@ index 3e6c0c8d4..000000000
 -&cpu_3 {
 -	clocks = <&scmi_dvfs 0>;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_fpga_2x2.dts b/arch/riscv/boot/dts/ky/x1-pro_fpga_2x2.dts
-deleted file mode 100644
-index f4ef7c7b6..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_fpga_2x2.dts
 +++ /dev/null
 @@ -1,162 +0,0 @@
@@ -1630,9 +1616,6 @@ index f4ef7c7b6..000000000
 -&cpu_3 {
 -	clocks = <&scmi_dvfs 0>;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_qemu.dts b/arch/riscv/boot/dts/ky/x1-pro_qemu.dts
-deleted file mode 100644
-index b2a04f938..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_qemu.dts
 +++ /dev/null
 @@ -1,128 +0,0 @@
@@ -1764,9 +1747,6 @@ index b2a04f938..000000000
 -	};
 -};
 -
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_sim.dts b/arch/riscv/boot/dts/ky/x1-pro_sim.dts
-deleted file mode 100644
-index 031a7e1dd..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_sim.dts
 +++ /dev/null
 @@ -1,23 +0,0 @@
@@ -1793,9 +1773,6 @@ index 031a7e1dd..000000000
 -&uart0 {
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1-pro_verify.dts b/arch/riscv/boot/dts/ky/x1-pro_verify.dts
-deleted file mode 100644
-index f22e9d888..000000000
 --- a/arch/riscv/boot/dts/ky/x1-pro_verify.dts
 +++ /dev/null
 @@ -1,133 +0,0 @@
@@ -1932,9 +1909,6 @@ index f22e9d888..000000000
 -&cpu_3 {
 -	clocks = <&scmi_dvfs 0>;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_FusionOne.dts b/arch/riscv/boot/dts/ky/x1_FusionOne.dts
-deleted file mode 100644
-index 7204fa775..000000000
 --- a/arch/riscv/boot/dts/ky/x1_FusionOne.dts
 +++ /dev/null
 @@ -1,882 +0,0 @@
@@ -2820,9 +2794,6 @@ index 7204fa775..000000000
 -};
 -
 -
-diff --git a/arch/riscv/boot/dts/ky/x1_MINI-PC.dts b/arch/riscv/boot/dts/ky/x1_MINI-PC.dts
-deleted file mode 100644
-index c7a767e31..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MINI-PC.dts
 +++ /dev/null
 @@ -1,882 +0,0 @@
@@ -3708,9 +3679,6 @@ index c7a767e31..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Book.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Book.dts
-deleted file mode 100644
-index 9d652c161..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Book.dts
 +++ /dev/null
 @@ -1,860 +0,0 @@
@@ -4574,9 +4542,6 @@ index 9d652c161..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Card.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Card.dts
-deleted file mode 100644
-index d4b50b664..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Card.dts
 +++ /dev/null
 @@ -1,918 +0,0 @@
@@ -5498,9 +5463,6 @@ index d4b50b664..000000000
 -		sound-dai = <&hdmiaudio>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-N1.dts b/arch/riscv/boot/dts/ky/x1_MUSE-N1.dts
-deleted file mode 100644
-index 670b32201..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-N1.dts
 +++ /dev/null
 @@ -1,750 +0,0 @@
@@ -6254,9 +6216,6 @@ index 670b32201..000000000
 -	memory-region = <&rcpu_mem_0>, <&rcpu_mem_heap>, <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>, <&rsc_table>, <&rcpu_mem_snapshots>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Paper-mini-4g.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Paper-mini-4g.dts
-deleted file mode 100644
-index 3d492868e..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Paper-mini-4g.dts
 +++ /dev/null
 @@ -1,1090 +0,0 @@
@@ -7350,9 +7309,6 @@ index 3d492868e..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Paper.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Paper.dts
-deleted file mode 100644
-index 6c4bcfdc9..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Paper.dts
 +++ /dev/null
 @@ -1,1280 +0,0 @@
@@ -8636,9 +8592,6 @@ index 6c4bcfdc9..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Paper2.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Paper2.dts
-deleted file mode 100644
-index b1856d993..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Paper2.dts
 +++ /dev/null
 @@ -1,1274 +0,0 @@
@@ -9916,9 +9869,6 @@ index b1856d993..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_MUSE-Pi.dts b/arch/riscv/boot/dts/ky/x1_MUSE-Pi.dts
-deleted file mode 100644
-index e5dfe04d1..000000000
 --- a/arch/riscv/boot/dts/ky/x1_MUSE-Pi.dts
 +++ /dev/null
 @@ -1,1096 +0,0 @@
@@ -11018,9 +10968,6 @@ index e5dfe04d1..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_ZT001H.dts b/arch/riscv/boot/dts/ky/x1_ZT001H.dts
-deleted file mode 100644
-index f9d1ec3d3..000000000
 --- a/arch/riscv/boot/dts/ky/x1_ZT001H.dts
 +++ /dev/null
 @@ -1,953 +0,0 @@
@@ -11977,9 +11924,6 @@ index f9d1ec3d3..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_baton-camera.dts b/arch/riscv/boot/dts/ky/x1_baton-camera.dts
-deleted file mode 100644
-index 8afe92712..000000000
 --- a/arch/riscv/boot/dts/ky/x1_baton-camera.dts
 +++ /dev/null
 @@ -1,910 +0,0 @@
@@ -12893,9 +12837,6 @@ index 8afe92712..000000000
 -&sound_hdmi {
 -	status = "disabled";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_bit-brick.dts b/arch/riscv/boot/dts/ky/x1_bit-brick.dts
-deleted file mode 100644
-index f54b2a0e9..000000000
 --- a/arch/riscv/boot/dts/ky/x1_bit-brick.dts
 +++ /dev/null
 @@ -1,1105 +0,0 @@
@@ -14004,9 +13945,6 @@ index f54b2a0e9..000000000
 -	};
 -};
 -
-diff --git a/arch/riscv/boot/dts/ky/x1_deb1.dts b/arch/riscv/boot/dts/ky/x1_deb1.dts
-deleted file mode 100644
-index 9ea29ffbb..000000000
 --- a/arch/riscv/boot/dts/ky/x1_deb1.dts
 +++ /dev/null
 @@ -1,1145 +0,0 @@
@@ -15155,9 +15093,6 @@ index 9ea29ffbb..000000000
 -	pinctrl-0 = <&pinctrl_rpwm2_0>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_deb2.dts b/arch/riscv/boot/dts/ky/x1_deb2.dts
-deleted file mode 100644
-index a453b1764..000000000
 --- a/arch/riscv/boot/dts/ky/x1_deb2.dts
 +++ /dev/null
 @@ -1,1003 +0,0 @@
@@ -16164,9 +16099,6 @@ index a453b1764..000000000
 -&watchdog {
 -	spa,wdt-enable-restart-handler;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_evb.dts b/arch/riscv/boot/dts/ky/x1_evb.dts
-deleted file mode 100644
-index 5b94262be..000000000
 --- a/arch/riscv/boot/dts/ky/x1_evb.dts
 +++ /dev/null
 @@ -1,913 +0,0 @@
@@ -17083,9 +17015,6 @@ index 5b94262be..000000000
 -&watchdog {
 -	spa,wdt-enable-restart-handler;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_fpga.dts b/arch/riscv/boot/dts/ky/x1_fpga.dts
-deleted file mode 100644
-index 6831e731d..000000000
 --- a/arch/riscv/boot/dts/ky/x1_fpga.dts
 +++ /dev/null
 @@ -1,239 +0,0 @@
@@ -17328,9 +17257,6 @@ index 6831e731d..000000000
 -		status = "okay";
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_fpga_1x4.dts b/arch/riscv/boot/dts/ky/x1_fpga_1x4.dts
-deleted file mode 100644
-index 7d22bc21f..000000000
 --- a/arch/riscv/boot/dts/ky/x1_fpga_1x4.dts
 +++ /dev/null
 @@ -1,119 +0,0 @@
@@ -17453,9 +17379,6 @@ index 7d22bc21f..000000000
 -		};
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_fpga_2x2.dts b/arch/riscv/boot/dts/ky/x1_fpga_2x2.dts
-deleted file mode 100644
-index 1e62c30ae..000000000
 --- a/arch/riscv/boot/dts/ky/x1_fpga_2x2.dts
 +++ /dev/null
 @@ -1,262 +0,0 @@
@@ -17721,9 +17644,6 @@ index 1e62c30ae..000000000
 -	};
 -};
 -
-diff --git a/arch/riscv/boot/dts/ky/x1_hs450.dts b/arch/riscv/boot/dts/ky/x1_hs450.dts
-deleted file mode 100644
-index 84dcea750..000000000
 --- a/arch/riscv/boot/dts/ky/x1_hs450.dts
 +++ /dev/null
 @@ -1,838 +0,0 @@
@@ -18565,9 +18485,6 @@ index 84dcea750..000000000
 -&watchdog {
 -	spa,wdt-enable-restart-handler;
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_kx312.dts b/arch/riscv/boot/dts/ky/x1_kx312.dts
-deleted file mode 100644
-index a9a915cdb..000000000
 --- a/arch/riscv/boot/dts/ky/x1_kx312.dts
 +++ /dev/null
 @@ -1,864 +0,0 @@
@@ -19435,9 +19352,6 @@ index a9a915cdb..000000000
 -		sound-dai = <&es8326>;
 -	};
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_lpi3a.dts b/arch/riscv/boot/dts/ky/x1_lpi3a.dts
-deleted file mode 100644
-index 380bfcefb..000000000
 --- a/arch/riscv/boot/dts/ky/x1_lpi3a.dts
 +++ /dev/null
 @@ -1,1265 +0,0 @@
@@ -20706,9 +20620,6 @@ index 380bfcefb..000000000
 -	pinctrl-0 = <&pinctrl_rpwm2_0>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_milkv-jupiter.dts b/arch/riscv/boot/dts/ky/x1_milkv-jupiter.dts
-deleted file mode 100644
-index 3f1467909..000000000
 --- a/arch/riscv/boot/dts/ky/x1_milkv-jupiter.dts
 +++ /dev/null
 @@ -1,1167 +0,0 @@
@@ -21879,9 +21790,6 @@ index 3f1467909..000000000
 -	pinctrl-0 = <&pinctrl_rpwm2_0>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_mingo.dts b/arch/riscv/boot/dts/ky/x1_mingo.dts
-deleted file mode 100644
-index 449289544..000000000
 --- a/arch/riscv/boot/dts/ky/x1_mingo.dts
 +++ /dev/null
 @@ -1,635 +0,0 @@
@@ -22520,9 +22428,6 @@ index 449289544..000000000
 -	memory-region = <&rcpu_mem_0>, <&rcpu_mem_heap>, <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>, <&rsc_table>, <&rcpu_mem_snapshots>;
 -	status = "okay";
 -};
-diff --git a/arch/riscv/boot/dts/ky/x1_uav.dts b/arch/riscv/boot/dts/ky/x1_uav.dts
-deleted file mode 100644
-index 743c31b67..000000000
 --- a/arch/riscv/boot/dts/ky/x1_uav.dts
 +++ /dev/null
 @@ -1,1186 +0,0 @@
@@ -23712,6 +23617,3 @@ index 743c31b67..000000000
 -	pinctrl-0 = <&pinctrl_rpwm2_0>;
 -	status = "okay";
 -};
--- 
-2.34.1
-

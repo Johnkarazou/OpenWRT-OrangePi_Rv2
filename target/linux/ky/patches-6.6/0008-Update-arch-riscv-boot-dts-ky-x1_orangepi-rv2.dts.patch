@@ -7,11 +7,9 @@ Subject: [PATCH 08/11] Update arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
  arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts | 25 ++++++++++++++++++++--
  1 file changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
-index 428e7271a..72565aa86 100644
 --- a/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
 +++ b/arch/riscv/boot/dts/ky/x1_orangepi-rv2.dts
-@@ -211,7 +211,7 @@ &pwm14 {
+@@ -211,7 +211,7 @@
  &dpu_online2_dsi {
  	memory-region = <&dpu_resv>;
  	ky-dpu-bitclk = <500000000>;
@@ -20,7 +18,7 @@ index 428e7271a..72565aa86 100644
  	dsi_1v2-supply = <&ldo_5>;
  	vin-supply-names = "dsi_1v2";
  	status = "disabled";
-@@ -294,7 +294,7 @@ es8323: es8323@11 {
+@@ -294,7 +294,7 @@
  		earphone-sw-gpio = <&gpio 79 0>;
          };
  
@@ -29,7 +27,7 @@ index 428e7271a..72565aa86 100644
  		compatible = "goodix,gt9271";
  		reg = <0x14>;
  		interrupt-parent = <&gpio>;
-@@ -308,6 +308,7 @@ touchscreen@14 {
+@@ -308,6 +308,7 @@
  		touchscreen-swapped-x-y;
  		touchscreen-size-x = <1280>;
  		touchscreen-size-y = <800>;
@@ -37,7 +35,7 @@ index 428e7271a..72565aa86 100644
  	};
  };
  
-@@ -675,6 +676,13 @@ X1_PADCONF(PRI_TDI, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_1V8_DS2))	/* uart5_txd
+@@ -675,6 +676,13 @@
  			X1_PADCONF(PRI_TMS, MUX_MODE4, (EDGE_NONE | PULL_UP | PAD_1V8_DS2))	/* uart5_rxd */
  		>;
  	};
@@ -51,7 +49,7 @@ index 428e7271a..72565aa86 100644
  };
  
  &gpio{
-@@ -1143,12 +1151,25 @@ spi_dev0: spi@0 {
+@@ -1143,12 +1151,25 @@
  	};
  };
  
@@ -77,6 +75,3 @@ index 428e7271a..72565aa86 100644
  &uart9 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&pinctrl_uart9_2>;
--- 
-2.34.1
-

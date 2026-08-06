@@ -9,8 +9,6 @@ Subject: [PATCH 04/11] Update for orangepi
  scripts/package/mkdebian | 187 ++++++----------
  3 files changed, 352 insertions(+), 296 deletions(-)
 
-diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-index a16d60a4b..8c8e15d46 100644
 --- a/scripts/Makefile.package
 +++ b/scripts/Makefile.package
 @@ -152,6 +152,10 @@ deb-pkg srcdeb-pkg bindeb-pkg:
@@ -24,8 +22,6 @@ index a16d60a4b..8c8e15d46 100644
  # snap-pkg
  # ---------------------------------------------------------------------------
  PHONY += snap-pkg
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index e1c3a9e69..e427f198c 100755
 --- a/scripts/package/builddeb
 +++ b/scripts/package/builddeb
 @@ -26,148 +26,105 @@ if_enabled_echo() {
@@ -67,26 +63,29 @@ index e1c3a9e69..e427f198c 100755
 -install_linux_image () {
 -	pdir=$1
 -	pname=$2
--
--	rm -rf ${pdir}
 +	cat >> $pdir/DEBIAN/preinst <<EOT
 +rm -rf /boot/dtb-$version; rm -rf /boot/dtb
 +exit 0
 +EOT
  
--	# Only some architectures with OF support have this target
--	if is_enabled CONFIG_OF_EARLY_FLATTREE && [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
--		${MAKE} -f ${srctree}/Makefile INSTALL_DTBS_PATH="${pdir}/usr/lib/linux-image-${KERNELRELEASE}" dtbs_install
--	fi
+-	rm -rf ${pdir}
 +	cat >> $pdir/DEBIAN/postinst <<EOT
 +cd /boot
 +ln -sfT dtb-$version dtb 2> /dev/null || mv dtb-$version dtb
 +exit 0
 +EOT
  
+-	# Only some architectures with OF support have this target
+-	if is_enabled CONFIG_OF_EARLY_FLATTREE && [ -d "${srctree}/arch/${SRCARCH}/boot/dts" ]; then
+-		${MAKE} -f ${srctree}/Makefile INSTALL_DTBS_PATH="${pdir}/usr/lib/linux-image-${KERNELRELEASE}" dtbs_install
++	chmod 775 $pdir/DEBIAN/preinst ; chmod 775 $pdir/DEBIAN/postinst
+ 	fi
+ 
 -	${MAKE} -f ${srctree}/Makefile INSTALL_MOD_PATH="${pdir}" modules_install
 -	rm -f "${pdir}/lib/modules/${KERNELRELEASE}/build"
--
++	# Create postinst prerm scripts for headers
++	if [ "$3" = "headers" ]; then
+ 
 -	# Install the kernel
 -	if [ "${ARCH}" = um ] ; then
 -		mkdir -p "${pdir}/usr/lib/uml/modules"
@@ -99,9 +98,8 @@ index e1c3a9e69..e427f198c 100755
 -		mkdir -p "${pdir}/boot"
 -		cp System.map "${pdir}/boot/System.map-${KERNELRELEASE}"
 -		cp ${KCONFIG_CONFIG} "${pdir}/boot/config-${KERNELRELEASE}"
-+	chmod 775 $pdir/DEBIAN/preinst ; chmod 775 $pdir/DEBIAN/postinst
- 	fi
- 
+-	fi
+-
 -	# Not all arches have the same installed path in debian
 -	# XXX: have each arch Makefile export a variable of the canonical image install
 -	# path instead
@@ -143,9 +141,10 @@ index e1c3a9e69..e427f198c 100755
 -		chmod 755 "${pdir}/DEBIAN/${script}"
 -	done
 -}
-+	# Create postinst prerm scripts for headers
-+	if [ "$3" = "headers" ]; then
-+
+-
+-install_linux_image_dbg () {
+-	pdir=$1
+-	image_pdir=$2
 +cat >> $pdir/DEBIAN/postinst << EOT
 +cd /usr/src/linux-headers-$version
 +rm -rf scripts/kconfig/conf scripts/basic/fixdep scripts/mod/mk_elfconfig
@@ -158,12 +157,12 @@ index e1c3a9e69..e427f198c 100755
 +exit 0
 +EOT
  
--install_linux_image_dbg () {
--	pdir=$1
--	image_pdir=$2
--
 -	rm -rf ${pdir}
--
++cat >> $pdir/DEBIAN/prerm << EOT
++cd /usr/src/linux-headers-$version
++rm -rf scripts .config.old
++EOT
+ 
 -	for module in $(find ${image_pdir}/lib/modules/ -name *.ko -printf '%P\n'); do
 -		module=lib/modules/${module}
 -		mkdir -p $(dirname ${pdir}/usr/lib/debug/${module})
@@ -174,11 +173,7 @@ index e1c3a9e69..e427f198c 100755
 -		# then add a link to those
 -		${OBJCOPY} --add-gnu-debuglink=${pdir}/usr/lib/debug/${module} ${image_pdir}/${module}
 -	done
-+cat >> $pdir/DEBIAN/prerm << EOT
-+cd /usr/src/linux-headers-$version
-+rm -rf scripts .config.old
-+EOT
- 
+-
 -	# re-sign stripped modules
 -	if is_enabled CONFIG_MODULE_SIG_ALL; then
 -		${MAKE} -f ${srctree}/Makefile INSTALL_MOD_PATH="${image_pdir}" modules_sign
@@ -259,8 +254,6 @@ index e1c3a9e69..e427f198c 100755
 -install_tools(){
 -	pdir=$1
 -	version=$2
--
--	rm -rf $pdir
 +version=$KERNELRELEASE
 +tmpdir="$objtree/debian/tmp"
 +kernel_headers_dir="$objtree/debian/hdrtmp"
@@ -322,14 +315,18 @@ index e1c3a9e69..e427f198c 100755
 +	cp $KCONFIG_CONFIG "$tmpdir/boot/config-$version"
 +fi
 +cp "$($MAKE -s -f $srctree/Makefile image_name)" "$tmpdir/$installed_image_path"
-+
+ 
+-	rm -rf $pdir
 +if is_enabled CONFIG_OF_EARLY_FLATTREE; then
 +	# Only some architectures with OF support have this target
 +	if [ -d "${srctree}/arch/$SRCARCH/boot/dts" ]; then
 +		$MAKE -f $srctree/Makefile INSTALL_DTBS_PATH="$tmpdir/usr/lib/$packagename" dtbs_install
 +	fi
 +fi
-+
+ 
+-	mkdir -p "$pdir/usr/lib/linux-tools/$version"
+-	install -m755 $srctree/tools/perf/perf $pdir/usr/lib/linux-tools/$version
+-}
 +if is_enabled CONFIG_MODULES; then
 +	INSTALL_MOD_PATH="$tmpdir" $MAKE -f $srctree/Makefile modules_install
 +	rm -f "$tmpdir/lib/modules/$version/build"
@@ -357,16 +354,14 @@ index e1c3a9e69..e427f198c 100755
 +	fi
 +fi
  
--	mkdir -p "$pdir/usr/lib/linux-tools/$version"
--	install -m755 $srctree/tools/perf/perf $pdir/usr/lib/linux-tools/$version
--}
+-install_tools_common(){
+-	pdir=$1
 +if grep -q '^CONFIG_OF=y' $KCONFIG_CONFIG ; then
 +	#mkdir -p "$tmpdir/boot/dtb"
 +	INSTALL_DTBS_PATH="$dtb_dir/boot/dtb-$version" $MAKE KBUILD_SRC= dtbs_install
 +fi
  
--install_tools_common(){
--	pdir=$1
+-	rm -rf $pdir
 +if [ "$ARCH" != "um" ]; then
 +	$MAKE -f $srctree/Makefile headers
 +	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
@@ -387,31 +382,44 @@ index e1c3a9e69..e427f198c 100755
 +	mkdir -p "$tmpdir$debhookdir/$script.d"
 +	cat <<EOF > "$tmpdir/DEBIAN/$script"
 +#!/bin/bash
- 
--	rm -rf $pdir
++
 +set -e
  
 -	toolsbin=$pdir/usr/bin
 -	toolssbin=$pdir/usr/sbin
 -	toolsman=$pdir/usr/share/man
-+# Pass maintainer script parameters to hook scripts
-+export DEB_MAINT_PARAMS="\$*"
- 
+-
 -	install -d $toolsbin
 -	install -d $toolssbin
 -	install -d $toolsman/man1
 -	install -d $toolsman/man8
-+# Tell initramfs builder whether it's wanted
-+export INITRD=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
++# Pass maintainer script parameters to hook scripts
++export DEB_MAINT_PARAMS="\$*"
  
 -	install -m755 $srctree/scripts/package/generic $toolsbin/perf
 -	install -m644 $srctree/tools/perf/Documentation/*.1 $toolsman/man1
 -}
--
++# Tell initramfs builder whether it's wanted
++export INITRD=$(if_enabled_echo CONFIG_BLK_DEV_INITRD Yes No)
+ 
 -rm -f debian/files
--
++test -d $debhookdir/$script.d && run-parts --arg="$version" --arg="/$installed_image_path" $debhookdir/$script.d
++exit 0
++EOF
++	chmod 755 "$tmpdir/DEBIAN/$script"
++done
+ 
 -packages_enabled=$(dh_listpackages)
--
++##
++## Create sym link to kernel image
++##
++sed -e "s/exit 0//g" -i $tmpdir/DEBIAN/postinst
++cat >> $tmpdir/DEBIAN/postinst <<EOT
++ln -sf $(basename $installed_image_path) /boot/$image_name 2> /dev/null || cp /$installed_image_path /boot/$image_name
++touch /boot/.next
++exit 0
++EOT
+ 
 -for package in ${packages_enabled}
 -do
 -	case ${package} in
@@ -430,39 +438,7 @@ index e1c3a9e69..e427f198c 100755
 -	linux-tools-*)
 -		install_tools debian/linux-tools ${package#linux-tools-};;
 -	esac
-+test -d $debhookdir/$script.d && run-parts --arg="$version" --arg="/$installed_image_path" $debhookdir/$script.d
-+exit 0
-+EOF
-+	chmod 755 "$tmpdir/DEBIAN/$script"
- done
- 
--for package in ${packages_enabled}
--do
--	case ${package} in
--	*-dbg)
--		create_package ${package} debian/linux-image-dbg;;
--	linux-image-*|user-mode-linux-*)
--		create_package ${package} debian/linux-image;;
--	linux-libc-dev)
--		create_package ${package} debian/linux-libc-dev;;
--	linux-headers-*)
--		create_package ${package} debian/linux-headers;;
--	linux-tools-common)
--		create_package ${package} debian/linux-tools-common;;
--	linux-tools-*)
--		create_package ${package} debian/linux-tools;;
--	esac
 -done
-+##
-+## Create sym link to kernel image
-+##
-+sed -e "s/exit 0//g" -i $tmpdir/DEBIAN/postinst
-+cat >> $tmpdir/DEBIAN/postinst <<EOT
-+ln -sf $(basename $installed_image_path) /boot/$image_name 2> /dev/null || cp /$installed_image_path /boot/$image_name
-+touch /boot/.next
-+exit 0
-+EOT
-+
 +##
 +## FAT install workaround
 +##
@@ -481,7 +457,24 @@ index e1c3a9e69..e427f198c 100755
 +			break
 +		fi
 +	done
-+
+ 
+-for package in ${packages_enabled}
+-do
+-	case ${package} in
+-	*-dbg)
+-		create_package ${package} debian/linux-image-dbg;;
+-	linux-image-*|user-mode-linux-*)
+-		create_package ${package} debian/linux-image;;
+-	linux-libc-dev)
+-		create_package ${package} debian/linux-libc-dev;;
+-	linux-headers-*)
+-		create_package ${package} debian/linux-headers;;
+-	linux-tools-common)
+-		create_package ${package} debian/linux-tools-common;;
+-	linux-tools-*)
+-		create_package ${package} debian/linux-tools;;
+-	esac
+-done
 +	bootfstype=\$(blkid -s TYPE -o value \$boot_partition)
 +	if [ "\$bootfstype" = "vfat" ]; then
 +		# we have to keep it mounted! umount /boot
@@ -540,8 +533,6 @@ index e1c3a9e69..e427f198c 100755
 +fi
  
  exit 0
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 09ba258dc..58bb281eb 100755
 --- a/scripts/package/mkdebian
 +++ b/scripts/package/mkdebian
 @@ -84,88 +84,45 @@ set_debarch() {
@@ -716,7 +707,7 @@ index 09ba258dc..58bb281eb 100755
  
  Package: linux-libc-dev
  Section: devel
-@@ -242,61 +207,39 @@ Description: Linux support headers for userspace development
+@@ -242,61 +207,39 @@ Description: Linux support headers for u
   This package provides userspaces headers from the Linux kernel.  These headers
   are used by the installed headers for GNU glibc and other system libraries.
  Multi-Arch: same
@@ -798,6 +789,3 @@ index 09ba258dc..58bb281eb 100755
 +chmod +x debian/rules
  
  exit 0
--- 
-2.34.1
-

@@ -41,13 +41,18 @@ on ubuntu-latest.
   SD/NVMe space as `/userdata` on first boot.
 - Baked-in performance tuning: RPS on all interface RX queues, performance CPU
   governor, packet steering across cores, `txqueuelen 10000` on WireGuard ifup.
-- Two defconfigs: `orangepi_rv2_defconfig` (default) is minimal, derived from
-  what actually runs on the device — LuCI with material theme, package-manager,
-  ttyd and uhttpd apps, dnsmasq-full, adblock + https-dns-proxy + ddns-scripts,
-  PPPoE, PHP 8 (fpm) and Python 3 + uwsgi for custom /www services, zram and
-  CLI tooling. `orangepi_rv2_full_defconfig` keeps the older maximal set
-  (MariaDB, WireGuard + pbr, banip, adblock-fast, sensors, ...). Anything else
-  installs on demand from the package repository (`apk add banip`, ...).
+- Three defconfigs: `orangepi_rv2_defconfig` (default) is a **generic build** —
+  the stock router experience (LuCI, firewall, PPPoE) plus the community's
+  generally-recommended packages from
+  [the classic forum thread](https://forum.openwrt.org/t/generally-recommended-packages-to-install/122454):
+  adblock, https-dns-proxy, SQM, WireGuard, LuCI statistics, irqbalance,
+  advanced-reboot, curl/htop/iftop/iperf3/nano/tcpdump.
+  `orangepi_rv2_apps_defconfig` is what the maintainer's own device runs —
+  LuCI (material), adblock, https-dns-proxy, ddns-scripts, PPPoE, PHP 8 (fpm),
+  Python 3 + uwsgi and ttyd for custom /www services, etherwake.
+  `orangepi_rv2_full_defconfig` keeps the older maximal set (MariaDB,
+  WireGuard + pbr, banip, adblock-fast, sensors, ...). Anything else installs
+  on demand from the package repository (`apk add banip`, ...).
 
 ## Package repository
 

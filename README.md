@@ -8,6 +8,15 @@ The `ky` target does not exist upstream, so there are no official images or pack
 repositories for it. This repo builds both and hosts its own package repository
 (see [Package repository](#package-repository)).
 
+## Download
+
+Prebuilt images are published on the
+[Releases](https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2/releases) page.
+Flash the **factory** image from stock firmware, or the **sysupgrade** image from
+an existing OpenWrt installation (`sysupgrade -v <image>` keeps settings).
+Flashed images come preconfigured against this repo's package repository —
+`apk update && apk add <package>` works on first boot.
+
 ## Build
 
 Build dependencies (Debian 13):

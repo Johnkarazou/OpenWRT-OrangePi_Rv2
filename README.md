@@ -89,6 +89,8 @@ on ubuntu-latest.
   [the classic forum thread](https://forum.openwrt.org/t/generally-recommended-packages-to-install/122454):
   adblock, https-dns-proxy, SQM, WireGuard, LuCI statistics, irqbalance,
   advanced-reboot, curl/htop/iftop/iperf3/nano/tcpdump-mini.
+  LuCI attended-sysupgrade UI is patched to query this repo's GitHub Releases
+  API for updates instead of the official servers, offering direct download links.
   `orangepi_rv2_advanced_defconfig` is everything in default **plus** the
   maintainer's app-server stack: PHP 8 (fpm), Python 3 + uwsgi for custom
   /www services, ttyd, DDNS, etherwake, sudo, HTTPS LuCI, material theme,

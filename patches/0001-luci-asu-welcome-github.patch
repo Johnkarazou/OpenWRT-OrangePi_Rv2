@@ -1,8 +1,288 @@
+diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
+index fe0e08b..91fe103 100644
+--- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
++++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
+@@ -534,186 +534,50 @@ return view.extend({
+ 
+ 	handleCheck: function (data, firmware) {
+ 		this.request_hash.clear();
+-		let { url, revision, advanced_mode, branch } = data;
+ 		let { version, target, profile, packages } = firmware;
+-		let candidates = [];
+ 
+-		const endpoint = version.endsWith('SNAPSHOT') ? `revision/${version}/${target}` : 'overview';
+-		const request_url = `${url}/api/v1/${endpoint}`;
++		const github_api = 'https://api.github.com/repos/Johnkarazou/OpenWRT-OrangePi_Rv2/releases/latest';
+ 
+ 		ui.showModal(_('Searching...'), [
+-			E(
+-				'p',
+-				{ class: 'spinning' },
+-				_('Searching for an available sysupgrade of %s - %s').format(
+-					version,
+-					revision
+-				)
+-			),
++			E('p', { class: 'spinning' }, _('Checking GitHub for new firmware releases...')),
+ 		]);
+ 
+-		L.resolveDefault(request.get(request_url)).then((response) => {
++		L.resolveDefault(request.get(github_api)).then((response) => {
+ 			if (!response.ok) {
+-				ui.showModal(_('Error connecting to upgrade server'), [
+-					E(
+-						'p',
+-						{},
+-						_('Could not reach API at "%s". Please try again later.').format(
+-							response.url
+-						)
+-					),
+-					E('pre', {}, response.responseText),
++				ui.showModal(_('Update Check Failed'), [
++					E('p', {}, _('Could not reach the GitHub Releases API. Please check your internet connection or try again later.')),
+ 					E('div', { class: 'right' }, [
+ 						E('div', { class: 'btn', click: ui.hideModal }, _('Close')),
+ 					]),
+ 				]);
+ 				return;
+ 			}
+-			if (version.endsWith('SNAPSHOT')) {
+-				const remote_revision = response.json().revision;
+-				if (
+-					get_revision_count(revision) < get_revision_count(remote_revision)
+-				) {
+-					candidates.push([version, remote_revision]);
+-				}
+-			} else {
+-				const latest = response.json().latest;
+-
+-				// ensure order: newest to oldest release
+-				latest.sort().reverse();
+-
+-				for (let remote_version of latest) {
+-					let remote_branch = get_branch(remote_version);
+-
+-					// already latest version installed
+-					if (version == remote_version) {
+-						break;
+-					}
+-
+-					candidates.unshift([remote_version, null]);
+-
+-					// don't offer branches older than the current
+-					if (branch == remote_branch) {
+-						break;
+-					}
+-				}
+-			}
+-
+-			// allow to re-install running firmware in advanced mode
+-			if (advanced_mode == 1) {
+-				candidates.unshift([version, revision]);
+-			}
+-
+-			if (candidates.length) {
+-				let s, o;
+-
+-				let mapdata = {
+-					request: {
+-						profile,
+-						version: candidates[0][0],
+-						packages: Object.keys(packages).sort(),
+-					},
+-				};
+-
+-				let map = new form.JSONMap(mapdata, '');
+-
+-				s = map.section(
+-					form.NamedSection,
+-					'request',
+-					'',
+-					'',
+-					_('Use defaults for the safest update')
+-				);
+-				o = s.option(form.ListValue, 'version', _('Select firmware version'));
+-				for (let candidate of candidates) {
+-					if (candidate[0] == version && candidate[1] == revision) {
+-						o.value(
+-							candidate[0],
+-							_('[installed] %s').format(
+-								candidate[1]
+-									? `${candidate[0]} - ${candidate[1]}`
+-									: candidate[0]
+-							)
+-						);
+-					} else {
+-						o.value(
+-							candidate[0],
+-							candidate[1] ? `${candidate[0]} - ${candidate[1]}` : candidate[0]
+-						);
+-					}
+-				}
+ 
+-				if (advanced_mode == 1) {
+-					o = s.option(form.Value, 'profile', _('Board Name / Profile'));
+-					o = s.option(form.DynamicList, 'packages', _('Packages'));
+-				}
++			const release = JSON.parse(response.responseText);
++			const latest_tag = release.tag_name;
++			const current_version = data.revision || version;
+ 
+-				L.resolveDefault(map.render()).then((form_rendered) => {
+-					ui.showModal(_('New firmware upgrade available'), [
+-						E(
+-							'p',
+-							_('Currently running: %s - %s').format(
+-								version,
+-								revision
+-							)
+-						),
+-						form_rendered,
+-						E('div', { class: 'right' }, [
+-							E('div', { class: 'btn', click: ui.hideModal }, _('Cancel')),
+-							' ',
+-							E(
+-								'button',
+-								{
+-									class: 'btn cbi-button cbi-button-positive important',
+-									click: ui.createHandlerFn(this, function () {
+-										map.save().then(() => {
+-											this.applyPackageChanges({
+-												url,
+-												target,
+-												version:  mapdata.request.version,
+-												packages: mapdata.request.packages,
+-											}).then((packages) => {
+-												const content = {
+-													...firmware,
+-													packages: packages,
+-													version: mapdata.request.version,
+-													profile: mapdata.request.profile
+-												};
+-												this.pollFn = L.bind(function () {
+-													this.handleRequest(url, true, content, data, firmware);
+-												}, this);
+-												poll.add(this.pollFn, 5);
+-												poll.start();
+-											})
+-											.catch(error => {
+-											    ui.addNotification(null, E('p', error.message));
+-											    ui.hideModal();
+-											});
+-										});
+-									}),
+-								},
+-								_('Request firmware image')
+-							),
+-						]),
+-					]);
+-				});
+-			} else {
+-				ui.showModal(_('No upgrade available'), [
+-					E(
+-						'p',
+-						_('The device runs the latest firmware version %s - %s').format(
+-							version,
+-							revision
+-						)
+-					),
+-					E('div', { class: 'right' }, [
+-						E('div', { class: 'btn', click: ui.hideModal }, _('Close')),
+-					]),
+-				]);
+-			}
++			ui.showModal(_('Update Check Complete'), [
++				E('p', {}, _('The latest release on GitHub is: ') + E('b', {}, latest_tag)),
++				E('p', {}, _('Your current build version is: ') + E('b', {}, current_version)),
++				E('p', {}, _('A new release is published approximately once a month (or whenever ready).')),
++				E('p', {}, E('a', { href: release.html_url, target: '_blank', rel: 'noreferrer' }, _('Click here to view and download the latest release from GitHub.'))),
++				E('div', { class: 'right' }, [
++					E('div', { class: 'btn', click: ui.hideModal }, _('Close')),
++				]),
++			]);
++		}).catch((err) => {
++			ui.showModal(_('Error'), [
++				E('p', {}, _('Failed to parse GitHub response: ' + err.message)),
++				E('div', { class: 'right' }, [
++					E('div', { class: 'btn', click: ui.hideModal }, _('Close')),
++				]),
++			]);
+ 		});
+ 	},
+ 
++
++
+ 	load: async function () {
+ 		const promises = await Promise.all([
+ 			L.resolveDefault(callPackagelist(), {}),
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
-index 39bb72c..67d1857 100644
+index 39bb72c..8f16180 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
 +++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
-@@ -189,10 +189,14 @@ return baseclass.extend({
+@@ -139,46 +139,30 @@ return baseclass.extend({
+ 		const check_upgrades = uci.get_bool(...check_setting);
+ 
+ 		if (check_upgrades) {
+-			fetch('https://downloads.openwrt.org/.versions.json')
++			fetch('https://api.github.com/repos/Johnkarazou/OpenWRT-OrangePi_Rv2/releases/latest')
+ 			.then(response => response.json())
+-			.then(async (versions) => {
+-				var label = null;
+-				var new_version = null;
+-
+-				const installed_version = boardinfo?.release?.version;
+-				const prev_version = versions?.oldstable_version;
+-				const curr_version = versions?.stable_version;
+-				const next_version = versions?.upcoming_version;  // Only available during "rc".
+-
+-				if (shouldUpgrade(installed_version, prev_version)) {
+-					// On old branch, and a newer 'old stable' is available.
+-					label = 'old stable';
+-					new_version = prev_version;
+-				} else if (shouldUpgrade(installed_version, curr_version)) {
+-					// On old stable or current branch, and newer stable is available.
+-					label = 'stable';
+-					new_version = curr_version;
+-				} else if (shouldUpgrade(installed_version, next_version)) {
+-					// On current stable or rc branch, a newer rc is available.
+-					label = 'release candidate';
+-					new_version = next_version;
++			.then(async (release) => {
++				const latest_tag = release.tag_name;
++				const current_version = boardinfo?.release?.revision || boardinfo?.release?.version;
++
++				if (latest_tag && latest_tag !== current_version && !current_version.includes('SNAPSHOT')) {
++					ui.addTimeLimitedNotification(_('New Firmware Available'), [
++						E('p', _('A new firmware release is available on GitHub: ') + E('b', {}, latest_tag)),
++						E('p', [
++							E('a', {href: release.html_url, target: '_blank', rel: 'noreferrer'}, _('Click here to view the release notes and download it.')),
++						]),
++						E('div', { class: 'btn', click: () => setSetUpgradeCheck(false) }, _('Stop showing upgrade alerts')),
++					], 60000, 'notice');
+ 				}
+-
+-				if (new_version) {
+-					(async function(label, new_version) {
+-						const [available, upgrade_info] = await checkDeviceAvailable(boardinfo, new_version);
+-						if (available && upgrade_info)
+-							showUpgradeNotification(label, boardinfo, new_version, upgrade_info);
+-					})(label, new_version);
+-				}
+-
+ 			})
+ 			.catch(error => {
+-					console.error('Failed to fetch firmware upgrade version information:', error);
++				console.error('Failed to fetch firmware upgrade version information from GitHub:', error);
+ 			});
+ 		}
+ 	},
+ 
++
++
+ 	render: function(data) {
+ 		const isReadOnlyView = !L.hasViewPermission();
+ 		if (isReadOnlyView)
+@@ -189,10 +173,14 @@ return baseclass.extend({
  			return null;
  
  		let modal_body = [
@@ -10,12 +290,12 @@ index 39bb72c..67d1857 100644
 -			  'on the downloads site, so requires internet access.')),
 +			E('p',  _('Firmware upgrades for this build are distributed through the ' +
 +			  'project GitHub Releases page:')),
- 
--			E('p',  _('The check will be performed every time the Status -> Overview page is loaded.')),
++
 +			E('p', E('a', { href: 'https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2/releases' },
 +			  'https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2/releases')),
-+
-+			E('p',  _('A new release is published approximately once a month. ' +
+ 
+-			E('p',  _('The check will be performed every time the Status -> Overview page is loaded.')),
++			E('p',  _('A new release is published whenever ready (usually around once a month). ' +
 +			  'The check will be performed every time the Status -> Overview page is loaded.')),
  
  			E('p', _('You have not yet specified a preference for this setting. ' +

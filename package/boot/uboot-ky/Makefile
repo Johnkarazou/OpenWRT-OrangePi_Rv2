@@ -11,7 +11,7 @@ PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=https://github.com/orangepi-xunlong/u-boot-orangepi
 PKG_SOURCE_DATE:=2022-10-ky
 PKG_SOURCE_VERSION:=89bff4a7e4cadfb5f130edb1ec44c39bff20a427
-PKG_MIRROR_HASH:=f14299e993fc35dc68a2e1dde5bded44fabe718d4af00b065d34a9fa58c1436b
+PKG_MIRROR_HASH:=31d1d8bcb9da5a4b8f6a860cdfe2c5f94c233302d9f2e6c23a35ae5c02c63564
 
 include $(INCLUDE_DIR)/package.mk
 

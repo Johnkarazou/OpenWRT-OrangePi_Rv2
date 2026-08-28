@@ -1,0 +1,11 @@
+#!/bin/sh
+
+do_resize_rootfs() {
+    # Run the resizing logic before mount_root so the loop device is created at full size.
+    # The actual script is installed to /usr/bin/resize-rootfs.sh
+    if [ -x /usr/bin/resize-rootfs.sh ]; then
+        /usr/bin/resize-rootfs.sh
+    fi
+}
+
+[ "$INITRAMFS" = "1" ] || boot_hook_add preinit_main do_resize_rootfs

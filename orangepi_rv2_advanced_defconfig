@@ -1,8 +1,8 @@
-# Orange Pi RV2 — advanced build.
-# Everything in orangepi_rv2_defconfig (stock router + hardware defaults +
-# community picks) plus the maintainer's app-server stack: PHP 8 (fpm),
-# Python 3 + uwsgi for custom /www services, ttyd, DDNS, etherwake,
-# HTTPS LuCI, material theme, dnsmasq-full.
+# Orange Pi RV2 — advanced build (maintainer's personal config).
+# Everything in orangepi_rv2_defconfig (full common-package set) plus the
+# app-server stack (PHP 8, Python 3 + uwsgi, ttyd, DDNS, etherwake, HTTPS LuCI,
+# material theme, dnsmasq-full) and the Fortress home-lab addition: rsync,
+# since the router's SSD is the vzdump second-copy target over SSH.
 CONFIG_TARGET_ky=y
 CONFIG_TARGET_ky_riscv64=y
 CONFIG_TARGET_ky_riscv64_DEVICE_x1_orangepi-rv2=y
@@ -21,47 +21,57 @@ CONFIG_PACKAGE_luci-ssl=y
 CONFIG_PACKAGE_luci-app-firewall=y
 CONFIG_PACKAGE_luci-app-package-manager=y
 CONFIG_PACKAGE_luci-app-advanced-reboot=y
+CONFIG_PACKAGE_luci-app-attendedsysupgrade=y
 
 # WAN
 CONFIG_PACKAGE_ppp=y
 CONFIG_PACKAGE_ppp-mod-pppoe=y
 CONFIG_PACKAGE_luci-proto-ppp=y
 
+# Firewall flow offloading (gigabit+ forwarding)
+CONFIG_PACKAGE_kmod-nft-offload=y
+
+# Wireless (board has no radio; covers USB/SDIO adapters too)
+CONFIG_PACKAGE_wpad-basic-mbedtls=y
+CONFIG_PACKAGE_iwinfo=y
+CONFIG_PACKAGE_hostapd-utils=y
+
+# VPN & tunnels
+CONFIG_PACKAGE_kmod-wireguard=y
+CONFIG_PACKAGE_wireguard-tools=y
+CONFIG_PACKAGE_luci-proto-wireguard=y
+CONFIG_PACKAGE_luci-app-wireguard=y
+
 # DNS / DHCP (full feature set)
 CONFIG_PACKAGE_dnsmasq-full=y
 
-# Hardware: USB 3.0 ports + plug-and-play disks
-CONFIG_PACKAGE_kmod-usb3=y
-CONFIG_PACKAGE_kmod-usb-storage=y
-CONFIG_PACKAGE_kmod-usb-storage-uas=y
-CONFIG_PACKAGE_kmod-fs-ext4=y
-CONFIG_PACKAGE_kmod-fs-exfat=y
-CONFIG_PACKAGE_kmod-fs-vfat=y
-CONFIG_PACKAGE_kmod-fs-ntfs3=y
-CONFIG_PACKAGE_kmod-nls-cp437=y
-CONFIG_PACKAGE_kmod-nls-iso8859-1=y
-CONFIG_PACKAGE_kmod-nls-utf8=y
-CONFIG_PACKAGE_e2fsprogs=y
-CONFIG_PACKAGE_dosfstools=y
+# Dynamic DNS
+CONFIG_PACKAGE_ddns-scripts=y
+CONFIG_PACKAGE_ddns-scripts-services=y
+CONFIG_PACKAGE_luci-app-ddns=y
+
+# QoS & performance
+CONFIG_PACKAGE_sqm-scripts=y
+CONFIG_PACKAGE_luci-app-sqm=y
+CONFIG_PACKAGE_irqbalance=y
+
+# DNS ad-blocking (modern variant)
+CONFIG_PACKAGE_adblock-fast=y
+CONFIG_PACKAGE_luci-app-adblock-fast=y
+
+# DNS privacy
+CONFIG_PACKAGE_https-dns-proxy=y
+CONFIG_PACKAGE_luci-app-https-dns-proxy=y
 
 # Hardware: thermal monitoring
 CONFIG_PACKAGE_lm-sensors=y
 
-# Community-recommended (forum.openwrt.org/t/122454)
-CONFIG_PACKAGE_adblock=y
-CONFIG_PACKAGE_luci-app-adblock=y
-CONFIG_PACKAGE_https-dns-proxy=y
-CONFIG_PACKAGE_luci-app-https-dns-proxy=y
-CONFIG_PACKAGE_sqm-scripts=y
-CONFIG_PACKAGE_luci-app-sqm=y
-CONFIG_PACKAGE_luci-proto-wireguard=y
-CONFIG_PACKAGE_wireguard-tools=y
+# Community tools (forum.openwrt.org/t/122454)
 CONFIG_PACKAGE_luci-app-statistics=y
 CONFIG_PACKAGE_collectd-mod-cpu=y
 CONFIG_PACKAGE_collectd-mod-interface=y
 CONFIG_PACKAGE_collectd-mod-load=y
 CONFIG_PACKAGE_collectd-mod-memory=y
-CONFIG_PACKAGE_irqbalance=y
 CONFIG_PACKAGE_curl=y
 CONFIG_PACKAGE_ca-certificates=y
 CONFIG_PACKAGE_htop=y
@@ -71,14 +81,12 @@ CONFIG_PACKAGE_nano=y
 CONFIG_PACKAGE_tcpdump-mini=y
 
 # Maintainer's services: dynamic DNS + terminal + tools
-CONFIG_PACKAGE_ddns-scripts=y
-CONFIG_PACKAGE_ddns-scripts-services=y
-CONFIG_PACKAGE_luci-app-ddns=y
 CONFIG_PACKAGE_ttyd=y
 CONFIG_PACKAGE_luci-app-ttyd=y
 CONFIG_PACKAGE_etherwake=y
 CONFIG_PACKAGE_sudo=y
 CONFIG_PACKAGE_btop=y
+CONFIG_PACKAGE_rsync=y
 
 # Maintainer's services: PHP 8 stack
 CONFIG_PACKAGE_php8=y

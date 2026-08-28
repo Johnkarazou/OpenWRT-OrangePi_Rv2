@@ -8,6 +8,38 @@ The `ky` target does not exist upstream, so there are no official images or pack
 repositories for it. This repo builds both and hosts its own package repository
 (see [Package repository](#package-repository)).
 
+<div align="center">
+
+## ⛔ WARNING — READ ME BEFORE YOU PROCEED ⛔
+
+</div>
+
+> ### 🔴 THE FIRST BOOT RESIZES THE SD CARD TO FULL CAPACITY 🔴
+>
+> This firmware ships with **`ky-resize-rootfs` ENABLED BY DEFAULT**.
+> During the earliest boot phase (preinit — before the writable overlay
+> even exists) it grows the root partition to fill the **ENTIRE SD/eMMC
+> card**, automatically, in a single boot. Anything already on the card
+> beyond the flashed image will be consumed by the resize.
+>
+> **Want a fixed partition layout instead? Disable it before building:**
+>
+> 1. run `make menuconfig`
+> 2. go to **Base system → ky-resize-rootfs**
+>    (tip: press `/` and type `ky-resize` to jump straight to it)
+> 3. deselect it with `N`
+> 4. build as usual — the root partition then stays exactly
+>    `CONFIG_TARGET_ROOTFS_PARTSIZE` (default 2048 MB) and nothing is resized
+>
+> **⚠️ squashfs images only.** The auto-resize applies to the **squashfs**
+> factory/sysupgrade images. The **ext4** images are **not** auto-resized:
+> OpenWrt builds them with `make_ext4fs`, which does not prepare the
+> filesystem for runtime scaling (no reserved group descriptors / resize
+> inode), so a mounted ext4 root cannot be enlarged online. OpenWrt's ext4
+> images are designed for use cases where `CONFIG_TARGET_ROOTFS_PARTSIZE`
+> is set to match the target storage exactly — or where you resize offline
+> (e.g. gparted / `resize2fs` from another system).
+
 ## Download
 
 Prebuilt images are published on the
@@ -51,8 +83,8 @@ on ubuntu-latest.
 - Baked-in performance tuning: RPS on all interface RX queues, performance CPU
   governor, packet steering across cores, `txqueuelen 10000` on WireGuard ifup.
 - Two defconfigs: `orangepi_rv2_defconfig` (**default**) is a stock-like router
-  build for this board — LuCI, firewall, PPPoE, USB 3.0 + storage filesystems,
-  NVMe tooling, thermal monitoring, plus the community's generally-recommended
+  build for this board — LuCI, firewall, PPPoE, thermal monitoring, plus the
+  community's generally-recommended
   packages from
   [the classic forum thread](https://forum.openwrt.org/t/generally-recommended-packages-to-install/122454):
   adblock, https-dns-proxy, SQM, WireGuard, LuCI statistics, irqbalance,

@@ -38,6 +38,7 @@ DEFAULT_PACKAGES.tweak:=\
 	luci-lib-ipkg
 
 DEFAULT_PACKAGES += uboot-envtools partx-utils e2fsprogs mkf2fs kmod-gpio-button-hotplug
+DEFAULT_PACKAGES += ky-resize-rootfs
 DEFAULT_PACKAGES += $(DEFAULT_PACKAGES.tweak)
 
 KERNELNAME:=Image dtbs

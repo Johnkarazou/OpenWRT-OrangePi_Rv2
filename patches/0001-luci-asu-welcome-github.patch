@@ -1,0 +1,22 @@
+diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
+index 39bb72c..67d1857 100644
+--- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
++++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
+@@ -189,10 +189,14 @@ return baseclass.extend({
+ 			return null;
+ 
+ 		let modal_body = [
+-			E('p',  _('Checking for firmware upgrades requires access to several files ' +
+-			  'on the downloads site, so requires internet access.')),
++			E('p',  _('Firmware upgrades for this build are distributed through the ' +
++			  'project GitHub Releases page:')),
+ 
+-			E('p',  _('The check will be performed every time the Status -> Overview page is loaded.')),
++			E('p', E('a', { href: 'https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2/releases' },
++			  'https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2/releases')),
++
++			E('p',  _('A new release is published approximately once a month. ' +
++			  'The check will be performed every time the Status -> Overview page is loaded.')),
+ 
+ 			E('p', _('You have not yet specified a preference for this setting. ' +
+ 			  'Once set, this dialog will not be shown again, but you can go to ' +

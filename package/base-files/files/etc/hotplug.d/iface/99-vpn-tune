@@ -1,0 +1,6 @@
+#!/bin/sh
+# Raise txqueuelen on WireGuard interfaces when they come up
+[ "$ACTION" = "ifup" ] && {
+	proto="$(uci -q get network."$INTERFACE".proto)"
+	[ "$proto" = "wireguard" ] && ip link set dev "$DEVICE" txqueuelen 10000 2>/dev/null
+}

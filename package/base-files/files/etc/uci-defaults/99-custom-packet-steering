@@ -1,0 +1,5 @@
+#!/bin/sh
+# Natively enable Packet Steering across all cores
+uci set network.globals.packet_steering='1'
+uci commit network
+exit 0

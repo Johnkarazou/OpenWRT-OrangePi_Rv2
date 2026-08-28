@@ -25,7 +25,7 @@ git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2.git -b 25.12
 cd OpenWRT-OrangePi_Rv2
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-cp orangepi_rv2_defconfig .config   # or orangepi_rv2_full_defconfig
+cp orangepi_rv2_defconfig .config   # or orangepi_rv2_advanced_defconfig
 make defconfig
 make -j$(nproc) download
 make -j$(($(nproc)+1))
@@ -41,18 +41,21 @@ on ubuntu-latest.
   SD/NVMe space as `/userdata` on first boot.
 - Baked-in performance tuning: RPS on all interface RX queues, performance CPU
   governor, packet steering across cores, `txqueuelen 10000` on WireGuard ifup.
-- Three defconfigs: `orangepi_rv2_defconfig` (default) is a **generic build** —
-  the stock router experience (LuCI, firewall, PPPoE) plus the community's
-  generally-recommended packages from
+- Two defconfigs: `orangepi_rv2_defconfig` (**default**) is a stock-like router
+  build for this board — LuCI, firewall, PPPoE, USB 3.0 + storage filesystems,
+  NVMe tooling, thermal monitoring, plus the community's generally-recommended
+  packages from
   [the classic forum thread](https://forum.openwrt.org/t/generally-recommended-packages-to-install/122454):
   adblock, https-dns-proxy, SQM, WireGuard, LuCI statistics, irqbalance,
-  advanced-reboot, curl/htop/iftop/iperf3/nano/tcpdump.
-  `orangepi_rv2_apps_defconfig` is what the maintainer's own device runs —
-  LuCI (material), adblock, https-dns-proxy, ddns-scripts, PPPoE, PHP 8 (fpm),
-  Python 3 + uwsgi and ttyd for custom /www services, etherwake.
-  `orangepi_rv2_full_defconfig` keeps the older maximal set (MariaDB,
-  WireGuard + pbr, banip, adblock-fast, sensors, ...). Anything else installs
-  on demand from the package repository (`apk add banip`, ...).
+  advanced-reboot, curl/htop/iftop/iperf3/nano/tcpdump-mini.
+  `orangepi_rv2_advanced_defconfig` is everything in default **plus** the
+  maintainer's app-server stack: PHP 8 (fpm), Python 3 + uwsgi for custom
+  /www services, ttyd, DDNS, etherwake, sudo, HTTPS LuCI, material theme,
+  dnsmasq-full. Anything else installs on demand from the package repository
+  (`apk add banip`, ...).
+- **Wi-Fi note:** the board's Broadcom wireless has a vendor patch in the tree,
+  but `CONFIG_BCMDHD` is not enabled and no driver package is built — images
+  are wired-only until someone enables and tests it.
 
 ## Package repository
 

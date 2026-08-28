@@ -1,187 +1,95 @@
-![OpenWrt logo](include/logo.png)
+# OpenWrt — Orange Pi RV2 (Ky X1, riscv64)
 
-OpenWrt Project is a Linux operating system targeting embedded devices. Instead
-of trying to create a single, static firmware, OpenWrt provides a fully
-writable filesystem with package management. This frees you from the
-application selection and configuration provided by the vendor and allows you
-to customize the device through the use of packages to suit any application.
-For developers, OpenWrt is the framework to build an application without having
-to build a complete firmware around it; for users this means the ability for
-full customization, to use the device in ways never envisioned.
+Custom OpenWrt fork for the **Orange Pi RV2** router: `ky/riscv64` target, Ky X1 SoC,
+kernel 6.6. Based on [xunlong/openwrt](https://github.com/orangepi-xunlong/openwrt)
+on top of [openwrt/openwrt](https://github.com/openwrt/openwrt). GPL-2.0, as upstream.
 
-Sunshine!
+The `ky` target does not exist upstream, so there are no official images or package
+repositories for it. This repo builds both and hosts its own package repository
+(see [Package repository](#package-repository)).
 
-## Download
+## Build
 
-Built firmware images are available for many architectures and come with a
-package selection to be used as WiFi home router. To quickly find a factory
-image usable to migrate from a vendor stock firmware to OpenWrt, try the
-*Firmware Selector*.
+Build dependencies (Debian 13):
 
-* [OpenWrt Firmware Selector](https://firmware-selector.openwrt.org/)
-
-If your device is supported, please follow the **Info** link to see install
-instructions or consult the support resources listed below.
-
-## 
-
-An advanced user may require additional or specific package. (Toolchain, SDK, ...) For everything else than simple firmware download, try the wiki download page:
-
-* [OpenWrt Wiki Download](https://openwrt.org/downloads)
-
-## Development
-
-To build your own firmware you need a GNU/Linux, BSD or macOS system (case
-sensitive filesystem required). Cygwin is unsupported because of the lack of a
-case sensitive file system.
-
-### Requirements
-
-You need the following tools to compile OpenWrt, the package names vary between
-distributions. A complete list with distribution specific packages is found in
-the [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)
-documentation.
-
+```bash
+sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time \
+  util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev \
+  libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget \
+  gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib \
+  rsync zip device-tree-compiler clang bison file jq
 ```
-asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless rsync zip device-tree-compiler
-```
-Copy-paste command below.
-I use Debian 13:
-```
-sudo apt install -y asciidoc bash binutils bzip2 cmake flex git g++ gcc time util-linux gawk gzip help2man intltool libelf-dev zlib1g-dev make libncurses-dev libssl-dev patch perl-modules libthread-queue-any-perl python3-dev swig unzip wget gettext xsltproc libboost-dev libxml-parser-perl libusb-dev sharutils gcc-multilib openjdk-25-jdk-headless rsync zip device-tree-compiler
-```
-### Quickstart
 
-# Clone and setup
-
-```
-git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2 -b 25.12
+```bash
+git clone https://github.com/Johnkarazou/OpenWRT-OrangePi_Rv2.git -b 25.12
 cd OpenWRT-OrangePi_Rv2
-
-```
-# Update and install feeds
-
-```
 ./scripts/feeds update -a
 ./scripts/feeds install -a
-
-```
-# Apply Orange Pi RV2 configuration
-
-```
-cp orangepi_rv2_defconfig .config
+cp orangepi_rv2_defconfig .config   # or orangepi_rv2_full_defconfig
 make defconfig
-
+make -j$(nproc) download
+make -j$(($(nproc)+1))
 ```
-# Download sources and build
 
+Images land in `bin/targets/ky/riscv64/`, packages in `bin/packages/riscv64_generic/`.
+CI (`.github/workflows/build_rv2.yml`, manual dispatch) builds the same configuration
+on ubuntu-latest.
+
+## What's in the image (vs stock)
+
+- Kernel partition 128 MB, rootfs 2048 MB; `ky-userdata` formats the remaining
+  SD/NVMe space as `/userdata` on first boot.
+- Baked-in performance tuning: RPS on all interface RX queues, performance CPU
+  governor, packet steering across cores, `txqueuelen 10000` on WireGuard ifup.
+- Two defconfigs: `orangepi_rv2_defconfig` (default) is minimal, derived from
+  what actually runs on the device — LuCI with material theme, package-manager,
+  ttyd and uhttpd apps, dnsmasq-full, adblock + https-dns-proxy + ddns-scripts,
+  PPPoE, PHP 8 (fpm) and Python 3 + uwsgi for custom /www services, zram and
+  CLI tooling. `orangepi_rv2_full_defconfig` keeps the older maximal set
+  (MariaDB, WireGuard + pbr, banip, adblock-fast, sensors, ...). Anything else
+  installs on demand from the package repository (`apk add banip`, ...).
+
+## Package repository
+
+The built feeds are published on the `packages` branch (orphan branch, replaced
+on every publish) and served over HTTPS from this repo. Only `base`, `luci` and
+`packages` have packages selected and therefore indexes; `routing`, `telephony`
+and `video` build nothing for this config.
+
+On a device running one of these images (the signing key is already in
+`/etc/apk/keys/`):
+
+```bash
+cat > /etc/apk/repositories.d/customfeeds.list <<'EOF'
+https://raw.githubusercontent.com/Johnkarazou/OpenWRT-OrangePi_Rv2/packages/targets/ky/riscv64/packages/packages.adb
+https://raw.githubusercontent.com/Johnkarazou/OpenWRT-OrangePi_Rv2/packages/packages/riscv64_generic/base/packages.adb
+https://raw.githubusercontent.com/Johnkarazou/OpenWRT-OrangePi_Rv2/packages/packages/riscv64_generic/luci/packages.adb
+https://raw.githubusercontent.com/Johnkarazou/OpenWRT-OrangePi_Rv2/packages/packages/riscv64_generic/packages/packages.adb
+EOF
+apk update
 ```
-make -j $(nproc) download
-make -j $(($(nproc)+1))
 
-```
-## Custom Configuration Includes:
+New images point here automatically (`CONFIG_VERSION_REPO` in
+`orangepi_rv2_defconfig`), so `distfeeds.list` comes out correct from first boot.
 
-### Kernel Configuration
-- **Kernel Partition Size:** 64MB
-- **Root Filesystem Partition Size:** 256MB
-- **Auto-expanding Userdata:** Enabled via `ky-userdata` package (formats remaining NVMe/SD space as `/userdata`)
+Kmods install only on the matching image build (kernel vermagic) — flash the
+sysupgrade image from the same commit first.
 
-### Package Selection
+Feeds are pinned in `feeds.conf.default` to the exact commits recorded in
+`bin/targets/ky/riscv64/feeds.buildinfo`, so rebuilds are reproducible.
 
-**System & Monitoring**
-- dnsmasq-full
-- zram-swap
-- btop
-- htop
-- lm-sensors
-- sudo
-- nano
-- vim
+## Building your own fork
 
-**PHP8 & Modules**
-- php8
-- php8-cgi
-- php8-fpm
-- php8-mod-ctype
-- php8-mod-curl
-- php8-mod-gd
-- php8-mod-intl
-- php8-mod-mbstring
-- php8-mod-mysqli
-- php8-mod-mysql
-- php8-mod-sqlite3
-- php8-mod-xml
-- php8-mod-zip
+A fresh build generates its **own** signing keys (`key-build*`, `private-key.pem`),
+so images you build trust only your key — this repo's published `packages.adb`
+is signed with the maintainer's key and will fail signature verification on
+your images. Fork → build → publish your own `packages` branch with
+`./publish-packages.sh` → set `CONFIG_VERSION_REPO` in your defconfig to your
+own raw URL. Never commit the generated keys.
 
-**Database**
-- libmariadb
-- mariadb-server-base
-- mariadb-server
+## Signing
 
-**LuCI & Web Interface**
-- luci-app-adblock
-- luci-app-ddns
-- luci-app-ttyd
-- luci-app-uhttpd
-- luci-theme-material
-
-**Networking & Protocols**
-- luci-proto-wireguard
-- pbr (Policy Based Routing)
-- luci-app-pbr
-- ip-full
-
-**Utilities & Libraries**
-- liblz4
-- lz4
-- unzip
-- xz-utils
-- blkid
-- nvme-cli
-- swap-utils
-
-### Related Repositories
-
-The main repository uses multiple sub-repositories to manage packages of
-different categories. All packages are installed via the OpenWrt package
-manager called `opkg`. If you're looking to develop the web interface or port
-packages to OpenWrt, please find the fitting repository below.
-
-* [LuCI Web Interface](https://github.com/openwrt/luci): Modern and modular
-  interface to control the device via a web browser.
-
-* [OpenWrt Packages](https://github.com/openwrt/packages): Community repository
-  of ported packages.
-
-* [OpenWrt Routing](https://github.com/openwrt/routing): Packages specifically
-  focused on (mesh) routing.
-
-* [OpenWrt Video](https://github.com/openwrt/video): Packages specifically
-  focused on display servers and clients (Xorg and Wayland).
-
-## Support Information
-
-For a list of supported devices see the [OpenWrt Hardware Database](https://openwrt.org/supported_devices)
-
-### Documentation
-
-* [Quick Start Guide](https://openwrt.org/docs/guide-quick-start/start)
-* [User Guide](https://openwrt.org/docs/guide-user/start)
-* [Developer Documentation](https://openwrt.org/docs/guide-developer/start)
-* [Technical Reference](https://openwrt.org/docs/techref/start)
-
-### Support Community
-
-* [Forum](https://forum.openwrt.org): For usage, projects, discussions and hardware advise.
-* [Support Chat](https://webchat.oftc.net/#openwrt): Channel `#openwrt` on **oftc.net**.
-
-### Developer Community
-
-* [Bug Reports](https://bugs.openwrt.org): Report bugs in OpenWrt
-* [Dev Mailing List](https://lists.openwrt.org/mailman/listinfo/openwrt-devel): Send patches
-* [Dev Chat](https://webchat.oftc.net/#openwrt-devel): Channel `#openwrt-devel` on **oftc.net**.
-
-## License
-
-OpenWrt is licensed under GPL-2.0
+Indexes and images are signed with the keys generated at first build
+(`key-build*`, `private-key.pem` — gitignored, never commit them). The public
+halves are baked into `/etc/apk/keys/` of every image built with those keys.
+Lose them and you reflash everything; leak them and you rotate.

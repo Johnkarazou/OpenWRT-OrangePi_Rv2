@@ -268,7 +268,7 @@ index fe0e08b..7e4d389 100644
  		const promises = await Promise.all([
  			L.resolveDefault(callPackagelist(), {}),
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
-index 39bb72c..8f16180 100644
+index 39bb72c..610985a 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
 +++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
 @@ -139,46 +139,30 @@ return baseclass.extend({
@@ -305,7 +305,7 @@ index 39bb72c..8f16180 100644
 +
 +				if (latest_tag && latest_tag !== current_version && !current_version.includes('SNAPSHOT')) {
 +					ui.addTimeLimitedNotification(_('New Firmware Available'), [
-+						E('p', _('A new firmware release is available on GitHub: ') + E('b', {}, latest_tag)),
++						E('p', [ _('A new firmware release is available on GitHub: '), E('b', {}, latest_tag) ]),
 +						E('p', [
 +							E('a', {href: release.html_url, target: '_blank', rel: 'noreferrer'}, _('Click here to view the release notes and download it.')),
 +						]),

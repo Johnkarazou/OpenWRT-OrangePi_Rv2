@@ -13,9 +13,15 @@ REV="$(head -1 "$SRC/bin/targets/ky/riscv64/version.buildinfo")"
 
 TMP="$(mktemp -d /tmp/rv2-pub.XXXXXX)"
 trap 'rm -rf "$TMP"' EXIT
-mkdir -p "$TMP/packages/riscv64_generic" "$TMP/targets/ky/riscv64"
-cp -a "$SRC/bin/packages/riscv64_generic/." "$TMP/packages/riscv64_generic/"
-cp -a "$SRC/bin/targets/ky/riscv64/packages" "$TMP/targets/ky/riscv64/"
+git clone -q -b packages "git@github.com:Johnkarazou/OpenWRT-OrangePi_Rv2.git" "$TMP" || true
+FIRMWARE_VER=$(grep CONFIG_VERSION_NUMBER "$SRC/.config" | cut -d '"' -f 2 || true)
+if [ -z "$FIRMWARE_VER" ] || [ "$FIRMWARE_VER" = "SNAPSHOT" ]; then
+    FIRMWARE_VER="snapshots"
+fi
+
+mkdir -p "$TMP/$FIRMWARE_VER/packages/riscv64_generic" "$TMP/$FIRMWARE_VER/targets/ky/riscv64"
+cp -a "$SRC/bin/packages/riscv64_generic/." "$TMP/$FIRMWARE_VER/packages/riscv64_generic/"
+cp -a "$SRC/bin/targets/ky/riscv64/packages" "$TMP/$FIRMWARE_VER/targets/ky/riscv64/"
 
 cat > "$TMP/README.md" <<EOF
 # OpenWrt ky/riscv64 package repository — Orange Pi RV2
@@ -37,6 +43,6 @@ git add -A
 git -c user.name="$(git -C "$SRC" config user.name || echo Johnkarazou)" \
       -c user.email="$(git -C "$SRC" config user.email || echo Johnkarazou@users.noreply.github.com)" \
       commit -qm "packages: publish $REV — $(date -u +%Y-%m-%d)"
-git remote add "$REMOTE" "$(git -C "$SRC" remote get-url "$REMOTE")"
-git push -qf "$REMOTE" packages
+git remote add "$REMOTE" "$(git -C "$SRC" remote get-url "$REMOTE")" || true
+git push -q "$REMOTE" packages
 echo "Published $REV to the packages branch."

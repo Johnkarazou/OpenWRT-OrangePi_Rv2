@@ -1,5 +1,5 @@
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
-index fe0e08b..91fe103 100644
+index fe0e08b..7e4d389 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
 +++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
 @@ -534,186 +534,50 @@ return view.extend({
@@ -192,8 +192,8 @@ index fe0e08b..91fe103 100644
 -				]);
 -			}
 +			ui.showModal(_('Update Check Complete'), [
-+				E('p', {}, _('The latest release on GitHub is: ') + E('b', {}, latest_tag)),
-+				E('p', {}, _('Your current build version is: ') + E('b', {}, current_version)),
++				E('p', {}, [ _('The latest release on GitHub is: '), E('b', {}, latest_tag) ]),
++				E('p', {}, [ _('Your current build version is: '), E('b', {}, current_version) ]),
 +				E('p', {}, _('A new release is published approximately once a month (or whenever ready).')),
 +				E('p', {}, E('a', { href: release.html_url, target: '_blank', rel: 'noreferrer' }, _('Click here to view and download the latest release from GitHub.'))),
 +				E('div', { class: 'right' }, [

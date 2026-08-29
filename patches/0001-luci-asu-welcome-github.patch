@@ -1,3 +1,55 @@
+diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/configuration.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/configuration.js
+index 2128706..f1cf684 100644
+--- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/configuration.js
++++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/configuration.js
+@@ -9,29 +9,10 @@ return view.extend({
+ 		m = new form.Map(
+ 			'attendedsysupgrade',
+ 			_('Attended Sysupgrade'),
+-			_('Attendedsysupgrade Configuration.')
++			_('Attended Sysupgrade Configuration.')
+ 		);
+ 
+-		s = m.section(form.TypedSection, 'server', _('Server'));
+-		s.anonymous = true;
+-
+-		s.option(
+-			form.Value,
+-			'url',
+-			_('Address'),
+-			_('Address of the sysupgrade server')
+-		);
+-
+-		s.option(
+-			form.DynamicList,
+-			'rebuilder',
+-			_('Rebuilders'),
+-			_('Other ASU server instances that rebuild a requested image. ' +
+-			  'Allows to compare checksums and verify that the results are the same.'
+-			)
+-		);
+-
+-		s = m.section(form.TypedSection, 'client', _('Client'));
++		s = m.section(form.TypedSection, 'client', _('Client Options'));
+ 		s.anonymous = true;
+ 
+ 		o = s.option(
+@@ -52,15 +33,6 @@ return view.extend({
+ 		o.default = '1';
+ 		o.rmempty = false;
+ 
+-		o = s.option(
+-			form.Flag,
+-			'advanced_mode',
+-			_('Advanced Mode'),
+-			_('Show advanced options like package list modification')
+-		);
+-		o.default = '0';
+-		o.rmempty = false;
+-
+ 		return m.render();
+ 	},
+ });
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
 index fe0e08b..7e4d389 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js

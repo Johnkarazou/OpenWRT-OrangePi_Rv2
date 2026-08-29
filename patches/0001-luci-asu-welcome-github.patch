@@ -51,7 +51,7 @@ index 2128706..f1cf684 100644
  	},
  });
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
-index fe0e08b..7e4d389 100644
+index fe0e08b..2709d00 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
 +++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/attendedsysupgrade/overview.js
 @@ -534,186 +534,50 @@ return view.extend({
@@ -178,7 +178,7 @@ index fe0e08b..7e4d389 100644
 -				}
 +			const release = JSON.parse(response.responseText);
 +			const latest_tag = release.tag_name;
-+			const current_version = data.revision || version;
++			const current_version = version || data.revision;
  
 -				L.resolveDefault(map.render()).then((form_rendered) => {
 -					ui.showModal(_('New firmware upgrade available'), [
@@ -268,7 +268,7 @@ index fe0e08b..7e4d389 100644
  		const promises = await Promise.all([
  			L.resolveDefault(callPackagelist(), {}),
 diff --git a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
-index 39bb72c..610985a 100644
+index 39bb72c..befc6e5 100644
 --- a/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
 +++ b/applications/luci-app-attendedsysupgrade/htdocs/luci-static/resources/view/status/include/11_upgrades.js
 @@ -139,46 +139,30 @@ return baseclass.extend({
@@ -301,7 +301,7 @@ index 39bb72c..610985a 100644
 -					new_version = next_version;
 +			.then(async (release) => {
 +				const latest_tag = release.tag_name;
-+				const current_version = boardinfo?.release?.revision || boardinfo?.release?.version;
++				const current_version = boardinfo?.release?.version || boardinfo?.release?.revision;
 +
 +				if (latest_tag && latest_tag !== current_version && !current_version.includes('SNAPSHOT')) {
 +					ui.addTimeLimitedNotification(_('New Firmware Available'), [

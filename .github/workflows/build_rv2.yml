@@ -2,6 +2,24 @@ name: Build RV2 (25.12)
 
 on:
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: "Create a Draft GitHub Release after building?"
+        type: boolean
+        required: true
+        default: false
+      release_tag:
+        description: "Release Tag (e.g. v2026.08.29). Required if creating a release."
+        type: string
+        required: false
+      release_notes_file:
+        description: "Path to markdown file for release notes (e.g. OpenWrt_Release_Notes.md)"
+        type: string
+        default: "OpenWrt_Release_Notes.md"
+        required: false
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -47,3 +65,16 @@ jobs:
         name: openwrt-rv2-firmware
         path: bin/targets/
         retention-days: 7
+
+    - name: Create GitHub Release
+      if: ${{ github.event.inputs.publish_release == 'true' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.event.inputs.release_tag }}
+        name: Release ${{ github.event.inputs.release_tag }}
+        body_path: ${{ github.event.inputs.release_notes_file }}
+        draft: true
+        files: |
+          bin/targets/ky/riscv64/*-factory.img.gz
+          bin/targets/ky/riscv64/*-sysupgrade.img.gz
+          bin/targets/ky/riscv64/sha256sums

@@ -12,7 +12,7 @@
     "iptables-mod-extra": "1.8.10-r3",
     "iptables-mod-ipopt": "1.8.10-r3",
     "iptables-nft": "1.8.10-r3",
-    "kernel": "6.6.73~c582808c87df6158f5bf3060c96ca446-r1",
+    "kernel": "6.6.73~d69162d439d20df0f48c5c8ec81bbcd6-r1",
     "kmod-asn1-decoder": "6.6.73-r1",
     "kmod-br-netfilter": "6.6.73-r1",
     "kmod-brcmfmac": "6.6.73.6.18.39-r1",

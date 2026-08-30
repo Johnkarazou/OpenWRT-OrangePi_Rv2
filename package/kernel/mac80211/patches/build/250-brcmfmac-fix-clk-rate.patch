@@ -1,0 +1,24 @@
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+@@ -113,8 +113,20 @@
+ 	if (!of_device_is_compatible(np, "brcm,bcm4329-fmac"))
+ 		return;
+ 
+-	clk = devm_clk_get_optional_enabled_with_rate(dev, "lpo",
+-						      LPO_CLOCK_RATE);
++	clk = devm_clk_get_optional(dev, "lpo");
++	if (!IS_ERR_OR_NULL(clk)) {
++		int ret;
++		ret = clk_set_rate(clk, LPO_CLOCK_RATE);
++		if (ret) {
++			clk = ERR_PTR(ret);
++		} else {
++			ret = clk_prepare_enable(clk);
++			if (ret)
++				clk = ERR_PTR(ret);
++		}
++	}
++
+ 	if (!IS_ERR_OR_NULL(clk)) {
+ 		brcmf_dbg(INFO, "optimized LPO clock configured\n");
+ 		return;

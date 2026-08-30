@@ -1,0 +1,15 @@
+--- a/backport-include/linux/compiler_types.h
++++ b/backport-include/linux/compiler_types.h
+@@ -21,4 +21,12 @@
+ #endif
+ #endif
+ 
++#ifndef __counted_by_le
++#define __counted_by_le(member)
++#endif
++
++#ifndef __counted_by_be
++#define __counted_by_be(member)
++#endif
++
+ #endif /* _BACKPORTS_LINUX_COMPILER_TYPES_H */

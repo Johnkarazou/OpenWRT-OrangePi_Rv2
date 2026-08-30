@@ -1,5 +1,1 @@
-# add your custom package feeds here
-#
-# http://www.example.com/path/to/files/packages.adb
-https://Johnkarazou.github.io/OpenWRT-OrangePi_Rv2/packages/riscv64_generic/packages
-https://Johnkarazou.github.io/OpenWRT-OrangePi_Rv2/packages/riscv64_generic/luci
+src/gz custom_packages https://raw.githubusercontent.com/Johnkarazou/OpenWRT-OrangePi_Rv2/packages/packages

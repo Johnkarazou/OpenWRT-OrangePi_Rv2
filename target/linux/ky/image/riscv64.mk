@@ -8,6 +8,7 @@ KERNEL_LOADADDR := 0x03200000
 define Device/x1_orangepi-rv2
   DEVICE_VENDOR := KY
   DEVICE_MODEL := Orange Pi RV 2
+  SUPPORTED_DEVICES := ky,orangepi-rv2 x1,orangepi-rv2
   SOC := x1
   DEVICE_PACKAGES := kmod-usb-net-rtl8152 u-boot-orangepi-rv2-x1
 endef

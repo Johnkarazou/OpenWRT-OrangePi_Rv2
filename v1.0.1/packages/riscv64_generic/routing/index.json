@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "architecture": "riscv64_generic",
+  "packages": {
+    "ahcpd": "0.53-r3"
+  }
+}

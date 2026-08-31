@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "architecture": "riscv64_generic",
+  "packages": {
+    "libosip2": "5.3.1-r1",
+    "siproxd": "2025.07.24~0bb5dd4a-r1"
+  }
+}

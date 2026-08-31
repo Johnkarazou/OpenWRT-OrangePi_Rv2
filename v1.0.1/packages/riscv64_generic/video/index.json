@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "architecture": "riscv64_generic",
+  "packages": {
+    "fribidi": "1.0.16-r1"
+  }
+}
